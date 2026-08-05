@@ -26,4 +26,7 @@ $routes->group('admin', static function ($routes): void {
     $routes->post('questions/(:num)', 'Admin\\QuestionController::update/$1', ['filter' => ['adminAuth', 'csrf']]);
     $routes->post('questions/(:num)/toggle', 'Admin\\QuestionController::toggle/$1', ['filter' => ['adminAuth', 'csrf']]);
     $routes->post('questions/(:num)/delete', 'Admin\\QuestionController::delete/$1', ['filter' => ['adminAuth', 'csrf']]);
+
+    $routes->get('quizzes', 'Admin\\QuizController::index', ['filter' => 'adminAuth', 'as' => 'admin.quizzes']);
+    $routes->get('quizzes/(:num)', 'Admin\\QuizController::show/$1', ['filter' => 'adminAuth', 'as' => 'admin.quiz.detail']);
 });

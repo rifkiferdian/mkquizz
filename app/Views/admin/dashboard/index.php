@@ -64,7 +64,7 @@
                     <?php endif ?>
                     <?php foreach ($recentQuizzes as $quiz): ?>
                         <tr class="hover:bg-orange-50/30">
-                            <td class="px-5 py-4"><p class="font-bold text-slate-700"><?= esc($quiz['title']) ?></p><p class="mt-1 text-[.68rem] text-slate-400"><?= esc($quiz['material_title']) ?></p></td>
+                            <td class="px-5 py-4"><a href="<?= site_url('admin/quizzes/' . $quiz['id']) ?>" class="font-bold text-slate-700 transition hover:text-orange-600"><?= esc($quiz['title']) ?></a><p class="mt-1 text-[.68rem] text-slate-400"><?= esc($quiz['material_title']) ?></p></td>
                             <td class="px-5 py-4 text-slate-500"><?= (int) $quiz['duration_minutes'] ?> menit</td>
                             <td class="px-5 py-4"><span class="rounded-full <?= $quiz['status'] === 'ACTIVE' ? 'bg-green-50 text-green-600' : 'bg-slate-100 text-slate-500' ?> px-2.5 py-1 text-[.62rem] font-bold"><?= esc($quiz['status']) ?></span></td>
                         </tr>
