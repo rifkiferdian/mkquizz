@@ -18,4 +18,12 @@ $routes->group('admin', static function ($routes): void {
     $routes->post('materials/(:num)', 'Admin\\MaterialController::update/$1', ['filter' => ['adminAuth', 'csrf']]);
     $routes->post('materials/(:num)/toggle', 'Admin\\MaterialController::toggle/$1', ['filter' => ['adminAuth', 'csrf']]);
     $routes->post('materials/(:num)/delete', 'Admin\\MaterialController::delete/$1', ['filter' => ['adminAuth', 'csrf']]);
+
+    $routes->get('questions', 'Admin\\QuestionController::index', ['filter' => 'adminAuth', 'as' => 'admin.questions']);
+    $routes->get('questions/create', 'Admin\\QuestionController::create', ['filter' => 'adminAuth']);
+    $routes->post('questions', 'Admin\\QuestionController::store', ['filter' => ['adminAuth', 'csrf']]);
+    $routes->get('questions/(:num)/edit', 'Admin\\QuestionController::edit/$1', ['filter' => 'adminAuth']);
+    $routes->post('questions/(:num)', 'Admin\\QuestionController::update/$1', ['filter' => ['adminAuth', 'csrf']]);
+    $routes->post('questions/(:num)/toggle', 'Admin\\QuestionController::toggle/$1', ['filter' => ['adminAuth', 'csrf']]);
+    $routes->post('questions/(:num)/delete', 'Admin\\QuestionController::delete/$1', ['filter' => ['adminAuth', 'csrf']]);
 });

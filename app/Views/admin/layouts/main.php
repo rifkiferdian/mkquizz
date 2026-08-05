@@ -31,7 +31,11 @@
                 <svg class="size-5 shrink-0" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5m-3 3 3-3 3 3M5 5h10a2 2 0 0 1 2 2v12H7a2 2 0 0 1-2-2V5Z"/></svg>
                 <span class="sidebar-label">Materi</span>
             </a>
-            <?php foreach ([['Quiz', 'M9 11h6M9 15h4M8 3h8l3 3v15H5V3h3Z'], ['Pertanyaan', 'M12 18h.01M9.2 9a3 3 0 1 1 4.7 2.5c-1.2.8-1.9 1.2-1.9 2.5M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z'], ['Sesi Quiz', 'M8 2v3m8-3v3M3 9h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z'], ['Peserta', 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87']] as [$label, $path]): ?>
+            <a href="<?= site_url('admin/questions') ?>" class="nav-link <?= $activeMenu === 'questions' ? 'active' : '' ?> flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-semibold">
+                <svg class="size-5 shrink-0" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 18h.01M9.2 9a3 3 0 1 1 4.7 2.5c-1.2.8-1.9 1.2-1.9 2.5M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z"/></svg>
+                <span class="sidebar-label">Pertanyaan</span>
+            </a>
+            <?php foreach ([['Quiz', 'M9 11h6M9 15h4M8 3h8l3 3v15H5V3h3Z'], ['Sesi Quiz', 'M8 2v3m8-3v3M3 9h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z'], ['Peserta', 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87']] as [$label, $path]): ?>
                 <span class="nav-link flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium opacity-70" title="Modul berikutnya">
                     <svg class="size-5 shrink-0" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="<?= esc($path) ?>"/></svg>
                     <span class="sidebar-label"><?= esc($label) ?></span>

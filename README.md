@@ -12,6 +12,9 @@ Modul yang sudah tersedia:
 - Daftar quiz terbaru dan sesi yang sedang berlangsung
 - Pengelolaan material: daftar, pencarian, filter, tambah, edit, status, dan hapus
 - Pencegahan penghapusan material yang masih digunakan
+- Bank pertanyaan: filter, tambah, edit, status, dan hapus aman
+- Pengelolaan 2–5 pilihan jawaban beserta satu kunci jawaban benar
+- Dukungan tipe pilihan ganda dan benar/salah
 - Tampilan responsif bertema putih dan oranye
 
 Skema database juga sudah menyediakan tabel untuk pertanyaan, pilihan jawaban, quiz, sesi, peserta, pengerjaan quiz, jawaban peserta, serta audit log. Antarmuka untuk modul-modul tersebut akan dikembangkan secara bertahap.
@@ -172,6 +175,7 @@ mkquizz/
 │   ├── Database/Seeds/     # Seeder akun administrator
 │   ├── Filters/            # Filter autentikasi administrator
 │   ├── Models/             # Model user, dashboard, dan material
+│   ├── Services/           # Transaksi penyimpanan pertanyaan dan opsi jawaban
 │   └── Views/admin/        # Layout dan halaman admin
 ├── public/
 │   └── assets/             # CSS hasil build dan JavaScript browser
@@ -197,6 +201,13 @@ mkquizz/
 | `POST` | `/admin/materials/{id}` | Memperbarui material |
 | `POST` | `/admin/materials/{id}/toggle` | Mengubah status material |
 | `POST` | `/admin/materials/{id}/delete` | Menghapus material |
+| `GET` | `/admin/questions` | Daftar dan filter bank pertanyaan |
+| `GET` | `/admin/questions/create` | Form pertanyaan dan pilihan jawaban |
+| `POST` | `/admin/questions` | Menyimpan pertanyaan beserta opsi |
+| `GET` | `/admin/questions/{id}/edit` | Form edit pertanyaan dan opsi |
+| `POST` | `/admin/questions/{id}` | Memperbarui pertanyaan dan opsi |
+| `POST` | `/admin/questions/{id}/toggle` | Mengubah status pertanyaan |
+| `POST` | `/admin/questions/{id}/delete` | Menghapus pertanyaan dan opsi |
 
 Route dashboard dan material dilindungi oleh filter `adminAuth`. Seluruh request yang mengubah data juga dilindungi oleh CSRF.
 
