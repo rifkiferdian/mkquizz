@@ -1,0 +1,67 @@
+# -----------------------------------------------------------------------------
+# Environment and local configuration
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# -----------------------------------------------------------------------------
+# PHP / Composer dependencies and tooling
+# -----------------------------------------------------------------------------
+/vendor/
+/.phpunit.cache/
+/.phpunit.result.cache
+/.php-cs-fixer.cache
+/.phpunit.cache
+composer.phar
+
+# -----------------------------------------------------------------------------
+# Node.js / Tailwind dependencies
+# Keep package.json and package-lock.json in version control.
+# -----------------------------------------------------------------------------
+/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# -----------------------------------------------------------------------------
+# CodeIgniter runtime data
+# Keep directory guards while ignoring generated and uploaded content.
+# -----------------------------------------------------------------------------
+/writable/cache/*
+!/writable/cache/index.html
+
+/writable/debugbar/*
+!/writable/debugbar/index.html
+
+/writable/logs/*
+!/writable/logs/index.html
+
+/writable/session/*
+!/writable/session/index.html
+
+/writable/uploads/*
+!/writable/uploads/index.html
+
+# Public user uploads, if this directory is added later.
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# -----------------------------------------------------------------------------
+# IDE and operating-system files
+# -----------------------------------------------------------------------------
+/.idea/
+/.vscode/
+*.code-workspace
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Temporary and backup files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+*.bak
