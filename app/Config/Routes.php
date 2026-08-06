@@ -48,6 +48,7 @@ $routes->group('admin', static function ($routes): void {
     $routes->post('sessions/(:num)/extend-pin', 'Admin\\QuizSessionController::extendPin/$1', ['filter' => ['adminAuth', 'csrf']]);
     $routes->get('sessions/(:num)/share', 'Admin\\QuizSessionController::share/$1', ['filter' => 'adminAuth', 'as' => 'admin.session.share']);
     $routes->get('sessions/(:num)/leaderboard', 'Admin\\QuizSessionController::leaderboard/$1', ['filter' => 'adminAuth', 'as' => 'admin.session.leaderboard']);
+    $routes->get('sessions/(:num)/report', 'Admin\\QuizSessionController::report/$1', ['filter' => 'adminAuth', 'as' => 'admin.session.report']);
     $routes->get('sessions/(:num)', 'Admin\\QuizSessionController::show/$1', ['filter' => 'adminAuth', 'as' => 'admin.session.detail']);
 
     $routes->get('participants', 'Admin\\ParticipantController::index', ['filter' => 'adminAuth', 'as' => 'admin.participants']);

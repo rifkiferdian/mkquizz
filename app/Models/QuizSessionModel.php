@@ -189,6 +189,43 @@ final class QuizSessionModel extends Model
         ];
     }
 
+    /** @return array{submitted_attempts: int, questions: list<array<string, mixed>>} */
+    public function getQuestionAnalysis(int $sessionId, int $quizId): array
+    {
+        $sessionId = max(0, $sessionId);
+        $submittedAttempts = $this->db->table('quiz_attempts')
+            ->where('session_id', $sessionId)
+            ->where('status', 'SUBMITTED')
+            ->countAllResults();
+
+        $questions = $this->db->table('quiz_questions')
+            ->select('quiz_questions.question_id, quiz_questions.sort_order, quiz_questions.score, questions.question_text, questions.difficulty, questions.question_type')
+            ->select('(SELECT option_text FROM question_options WHERE question_options.question_id = questions.id AND question_options.is_correct = 1 ORDER BY sort_order ASC LIMIT 1) AS correct_answer', false)
+            ->select("(SELECT COUNT(*) FROM participant_answers INNER JOIN quiz_attempts ON quiz_attempts.id = participant_answers.attempt_id WHERE quiz_attempts.session_id = {$sessionId} AND quiz_attempts.status = 'SUBMITTED' AND participant_answers.question_id = questions.id) AS answered_count", false)
+            ->select("(SELECT COUNT(*) FROM participant_answers INNER JOIN quiz_attempts ON quiz_attempts.id = participant_answers.attempt_id WHERE quiz_attempts.session_id = {$sessionId} AND quiz_attempts.status = 'SUBMITTED' AND participant_answers.question_id = questions.id AND participant_answers.is_correct = 1) AS correct_count", false)
+            ->select("(SELECT COUNT(*) FROM participant_answers INNER JOIN quiz_attempts ON quiz_attempts.id = participant_answers.attempt_id WHERE quiz_attempts.session_id = {$sessionId} AND quiz_attempts.status = 'SUBMITTED' AND participant_answers.question_id = questions.id AND participant_answers.is_correct = 0) AS wrong_count", false)
+            ->join('questions', 'questions.id = quiz_questions.question_id')
+            ->where('quiz_questions.quiz_id', $quizId)
+            ->orderBy('quiz_questions.sort_order', 'ASC')
+            ->get()
+            ->getResultArray();
+
+        foreach ($questions as &$question) {
+            $answered = (int) $question['answered_count'];
+            $correct = (int) $question['correct_count'];
+            $wrong = (int) $question['wrong_count'];
+            $question['unanswered_count'] = max(0, $submittedAttempts - $answered);
+            $question['correct_rate'] = $answered > 0 ? round(($correct / $answered) * 100, 1) : 0.0;
+            $question['wrong_rate'] = $answered > 0 ? round(($wrong / $answered) * 100, 1) : 0.0;
+        }
+        unset($question);
+
+        return [
+            'submitted_attempts' => $submittedAttempts,
+            'questions'          => $questions,
+        ];
+    }
+
     private function adminListBuilder(): BaseBuilder
     {
         return $this->builder()

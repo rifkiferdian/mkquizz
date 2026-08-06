@@ -29,6 +29,7 @@ Modul yang sudah tersedia:
 - Link dan QR Code peserta pada detail sesi, lengkap dengan salin link dan unduh QR
 - Halaman presentasi QR ukuran besar untuk ditampilkan dan dipindai peserta
 - Leaderboard sesi dengan podium, statistik, akurasi, durasi, dan peringkat lengkap
+- Report evaluasi sesi dengan chart jawaban benar, salah, tidak dijawab, dan soal prioritas evaluasi
 - Daftar dan detail peserta dengan filter aktivitas, riwayat pengerjaan, nilai, dan informasi perangkat
 - Tampilan responsif bertema putih dan oranye
 
@@ -241,6 +242,7 @@ mkquizz/
 | `GET` | `/admin/sessions/{id}` | Detail akses, peserta, dan performa sesi |
 | `GET` | `/admin/sessions/{id}/share` | Tampilan QR dan link peserta berukuran besar |
 | `GET` | `/admin/sessions/{id}/leaderboard` | Podium dan daftar hasil peserta per sesi |
+| `GET` | `/admin/sessions/{id}/report` | Chart dan analisis jawaban benar/salah per soal |
 | `GET` | `/admin/participants` | Daftar, pencarian, dan filter peserta |
 | `GET` | `/admin/participants/{id}` | Detail peserta dan riwayat pengerjaan quiz |
 | `GET` | `/quiz/{session_token}` | Halaman masuk peserta berdasarkan sesi quiz |
