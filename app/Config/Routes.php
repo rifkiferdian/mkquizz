@@ -40,6 +40,7 @@ $routes->group('admin', static function ($routes): void {
     $routes->get('quizzes', 'Admin\\QuizController::index', ['filter' => 'adminAuth', 'as' => 'admin.quizzes']);
     $routes->get('quizzes/create', 'Admin\\QuizController::create', ['filter' => ['adminAuth', 'adminRole']]);
     $routes->post('quizzes', 'Admin\\QuizController::store', ['filter' => ['adminAuth', 'adminRole', 'csrf']]);
+    $routes->get('quizzes/(:num)/report', 'Admin\\QuizController::report/$1', ['filter' => 'adminAuth', 'as' => 'admin.quiz.report']);
     $routes->get('quizzes/(:num)', 'Admin\\QuizController::show/$1', ['filter' => 'adminAuth', 'as' => 'admin.quiz.detail']);
 
     $routes->get('sessions', 'Admin\\QuizSessionController::index', ['filter' => 'adminAuth', 'as' => 'admin.sessions']);

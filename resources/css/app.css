@@ -1454,6 +1454,19 @@ body {
 .result-secondary-action { border: 1px solid #fed7aa; color: #c2410c; background: #fff; }
 .result-secondary-action:hover { background: #fff7ed; }
 
+.result-secondary-action.result-review-action {
+    border-color: #86efac;
+    color: #15803d;
+    background: #f0fdf4;
+}
+
+.result-secondary-action.result-review-action:hover {
+    border-color: #4ade80;
+    color: #fff;
+    background: #16a34a;
+    box-shadow: 0 8px 18px rgba(22, 163, 74, .18);
+}
+
 .participant-review-main {
     width: min(100%, 52rem);
     margin-inline: auto;

@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Models\QuizModel;
 use App\Models\QuizSessionModel;
+use App\Services\QuestionReportService;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\RedirectResponse;
 use DateTimeImmutable;
@@ -95,60 +96,26 @@ final class QuizSessionController extends BaseController
             throw PageNotFoundException::forPageNotFound('Sesi quiz tidak ditemukan.');
         }
 
-        $questionReport = $sessionModel->getQuestionAnalysis($id, (int) $quizSession['quiz_id']);
-        $questionSort = (string) $this->request->getGet('sort');
-        $questionSort = in_array($questionSort, ['wrong', 'correct', 'order'], true) ? $questionSort : 'wrong';
-        $summary = [
-            'submitted_attempts' => (int) ($questionReport['submitted_attempts'] ?? 0),
-            'total_answers'      => 0,
-            'correct_answers'    => 0,
-            'wrong_answers'      => 0,
-            'unanswered'         => 0,
-            'correct_rate'       => 0.0,
-        ];
-
-        foreach ($questionReport['questions'] as $question) {
-            $summary['total_answers'] += (int) $question['answered_count'];
-            $summary['correct_answers'] += (int) $question['correct_count'];
-            $summary['wrong_answers'] += (int) $question['wrong_count'];
-            $summary['unanswered'] += (int) $question['unanswered_count'];
-        }
-
-        $displayQuestions = $questionReport['questions'];
-        usort($displayQuestions, static function (array $first, array $second) use ($questionSort): int {
-            if ($questionSort === 'order') {
-                return (int) $first['sort_order'] <=> (int) $second['sort_order'];
-            }
-
-            $countField = $questionSort === 'correct' ? 'correct_count' : 'wrong_count';
-            $rateField = $questionSort === 'correct' ? 'correct_rate' : 'wrong_rate';
-
-            return ((int) $second[$countField] <=> (int) $first[$countField])
-                ?: ((float) $second[$rateField] <=> (float) $first[$rateField])
-                ?: ((int) $first['sort_order'] <=> (int) $second['sort_order']);
-        });
-        $summary['correct_rate'] = $summary['total_answers'] > 0
-            ? round(($summary['correct_answers'] / $summary['total_answers']) * 100, 1)
-            : 0.0;
-
-        $hardestQuestion = null;
-        foreach ($questionReport['questions'] as $question) {
-            if ((int) $question['wrong_count'] > 0 && ($hardestQuestion === null
-                || (float) $question['wrong_rate'] > (float) $hardestQuestion['wrong_rate']
-                || ((float) $question['wrong_rate'] === (float) $hardestQuestion['wrong_rate']
-                    && (int) $question['wrong_count'] > (int) $hardestQuestion['wrong_count']))) {
-                $hardestQuestion = $question;
-            }
-        }
+        $report = (new QuestionReportService())->prepare(
+            $sessionModel->getQuestionAnalysis($id, (int) $quizSession['quiz_id']),
+            $this->request->getGet('sort'),
+        );
 
         return view('admin/sessions/report', [
             'title'           => 'Report Evaluasi Soal',
             'subtitle'        => 'Analisis jawaban benar dan salah untuk evaluasi kualitas soal.',
-            'quizSession'     => $quizSession,
-            'questions'       => $displayQuestions,
-            'summary'         => $summary,
-            'hardestQuestion' => $hardestQuestion,
-            'questionSort'    => $questionSort,
+            'questions'       => $report['questions'],
+            'summary'         => $report['summary'],
+            'hardestQuestion' => $report['hardest_question'],
+            'questionSort'    => $report['sort'],
+            'reportContext'   => [
+                'back_url'    => site_url('admin/sessions/' . $id),
+                'back_label'  => 'Kembali ke Detail Sesi',
+                'filter_url'  => site_url('admin/sessions/' . $id . '/report'),
+                'scope_label' => $quizSession['session_name'],
+                'quiz_title'  => $quizSession['quiz_title'],
+                'note'        => 'Persentase dihitung dari seluruh attempt selesai pada sesi ini.',
+            ],
         ]);
     }
 

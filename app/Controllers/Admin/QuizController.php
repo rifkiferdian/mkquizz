@@ -7,6 +7,7 @@ use App\Models\MaterialModel;
 use App\Models\QuestionModel;
 use App\Models\QuizModel;
 use App\Services\QuizService;
+use App\Services\QuestionReportService;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\RedirectResponse;
 use Throwable;
@@ -52,6 +53,38 @@ final class QuizController extends BaseController
             'questions'   => $quizModel->getQuizQuestions($id),
             'sessions'    => $quizModel->getSessions($id),
             'performance' => $quizModel->getPerformance($id),
+        ]);
+    }
+
+    public function report(int $id): string
+    {
+        $quizModel = model(QuizModel::class);
+        $quiz = $quizModel->findAdminDetail($id);
+
+        if ($quiz === null) {
+            throw PageNotFoundException::forPageNotFound('Quiz tidak ditemukan.');
+        }
+
+        $report = (new QuestionReportService())->prepare(
+            $quizModel->getQuestionAnalysis($id),
+            $this->request->getGet('sort'),
+        );
+
+        return view('admin/sessions/report', [
+            'title'           => 'Report Evaluasi Quiz',
+            'subtitle'        => 'Gabungan analisis jawaban dari seluruh sesi quiz.',
+            'questions'       => $report['questions'],
+            'summary'         => $report['summary'],
+            'hardestQuestion' => $report['hardest_question'],
+            'questionSort'    => $report['sort'],
+            'reportContext'   => [
+                'back_url'    => site_url('admin/quizzes/' . $id),
+                'back_label'  => 'Kembali ke Detail Quiz',
+                'filter_url'  => site_url('admin/quizzes/' . $id . '/report'),
+                'scope_label' => 'Gabungan ' . (int) $quiz['session_count'] . ' sesi',
+                'quiz_title'  => $quiz['title'],
+                'note'        => 'Persentase dihitung dari seluruh attempt selesai pada semua sesi yang menggunakan quiz ini.',
+            ],
         ]);
     }
 

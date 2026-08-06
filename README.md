@@ -30,6 +30,7 @@ Modul yang sudah tersedia:
 - Halaman presentasi QR ukuran besar untuk ditampilkan dan dipindai peserta
 - Leaderboard sesi dengan podium, statistik, akurasi, durasi, dan peringkat lengkap
 - Report evaluasi sesi dengan chart jawaban benar, salah, tidak dijawab, dan soal prioritas evaluasi
+- Report evaluasi quiz yang menggabungkan hasil dari seluruh sesi terkait
 - Daftar dan detail peserta dengan filter aktivitas, riwayat pengerjaan, nilai, dan informasi perangkat
 - Tampilan responsif bertema putih dan oranye
 
@@ -235,6 +236,7 @@ mkquizz/
 | `GET` | `/admin/quizzes/create` | Form tambah quiz dan pemilihan pertanyaan |
 | `POST` | `/admin/quizzes` | Menyimpan quiz beserta pertanyaan |
 | `GET` | `/admin/quizzes/{id}` | Detail, pertanyaan, sesi, dan performa quiz |
+| `GET` | `/admin/quizzes/{id}/report` | Report gabungan seluruh sesi yang menggunakan quiz |
 | `GET` | `/admin/sessions` | Daftar, pencarian, dan filter sesi quiz |
 | `GET` | `/admin/sessions/create` | Form tambah dan penjadwalan sesi quiz |
 | `POST` | `/admin/sessions` | Menyimpan sesi serta membuat PIN dan token |
