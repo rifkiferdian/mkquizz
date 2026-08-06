@@ -33,7 +33,9 @@ $settings = [
 ?>
 <div class="p-5 md:p-8">
 <div class="mx-auto max-w-7xl">
-    <a href="<?= site_url('admin/quizzes') ?>" class="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 transition hover:text-orange-600"><svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>Kembali ke Daftar Quiz</a>
+    <div class="flex flex-wrap items-center justify-between gap-3"><a href="<?= site_url('admin/quizzes') ?>" class="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 transition hover:text-orange-600"><svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>Kembali ke Daftar Quiz</a><?php if (session('admin_role') !== 'PRESENTER' && $quiz['status'] === 'ACTIVE'): ?><a href="<?= site_url('admin/sessions/create?quiz_id=' . $quiz['id']) ?>" class="inline-flex items-center gap-2 rounded-xl bg-orange-500 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600"><svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Buat Sesi</a><?php endif ?></div>
+
+    <?php if (session('success')): ?><div class="mt-5 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700" role="status"><?= esc(session('success')) ?></div><?php endif ?>
 
     <section class="quiz-detail-hero mt-5" aria-labelledby="quiz-detail-title">
         <div class="relative z-1">

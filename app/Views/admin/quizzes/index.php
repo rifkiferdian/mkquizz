@@ -27,11 +27,13 @@ $statusMeta = [
             <h2 class="mt-1 text-lg font-bold text-slate-800">Daftar Quiz</h2>
             <p class="mt-1 text-xs text-slate-400">Pantau konfigurasi, konten, sesi, dan aktivitas setiap quiz.</p>
         </div>
-        <div class="inline-flex items-center gap-2 rounded-xl border border-orange-100 bg-white px-4 py-3 text-xs text-slate-500 shadow-sm">
-            <span class="status-dot size-2 rounded-full bg-green-500"></span>
-            <span><strong class="text-slate-700"><?= $summary['active'] ?></strong> quiz sedang aktif</span>
+        <div class="flex flex-wrap items-center gap-3">
+            <div class="inline-flex items-center gap-2 rounded-xl border border-orange-100 bg-white px-4 py-3 text-xs text-slate-500 shadow-sm"><span class="status-dot size-2 rounded-full bg-green-500"></span><span><strong class="text-slate-700"><?= $summary['active'] ?></strong> quiz sedang aktif</span></div>
+            <?php if (session('admin_role') !== 'PRESENTER'): ?><a href="<?= site_url('admin/quizzes/create') ?>" class="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-xs font-bold text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600"><svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Tambah Quiz</a><?php endif ?>
         </div>
     </div>
+
+    <?php if (session('success')): ?><div class="mt-5 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700" role="status"><?= esc(session('success')) ?></div><?php endif ?>
 
     <section class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Ringkasan quiz">
         <?php foreach ([['Total Quiz', $summary['total'], 'bg-blue-50 text-blue-500'], ['Quiz Aktif', $summary['active'], 'bg-green-50 text-green-600'], ['Draft', $summary['draft'], 'bg-orange-50 text-orange-600'], ['Nonaktif', $summary['inactive'], 'bg-slate-100 text-slate-500']] as [$label, $value, $color]): ?>

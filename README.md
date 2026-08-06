@@ -18,8 +18,10 @@ Modul yang sudah tersedia:
 - Pengelolaan 2–5 pilihan jawaban beserta satu kunci jawaban benar
 - Dukungan tipe pilihan ganda dan benar/salah
 - Daftar quiz dengan pencarian, filter, statistik konten, sesi, dan pengerjaan
+- Pembuatan quiz dengan konfigurasi dan pemilihan pertanyaan secara transaksional
 - Detail quiz dengan konfigurasi, pertanyaan, jawaban benar, sesi, dan performa peserta
 - Daftar dan detail sesi quiz dengan PIN, token, peserta, serta performa sesi
+- Pembuatan sesi terjadwal dengan PIN dan token akses otomatis
 - Daftar dan detail peserta dengan filter aktivitas, riwayat pengerjaan, nilai, dan informasi perangkat
 - Tampilan responsif bertema putih dan oranye
 
@@ -222,8 +224,13 @@ mkquizz/
 | `POST` | `/admin/questions/{id}/toggle` | Mengubah status pertanyaan |
 | `POST` | `/admin/questions/{id}/delete` | Menghapus pertanyaan dan opsi |
 | `GET` | `/admin/quizzes` | Daftar, pencarian, dan filter quiz |
+| `GET` | `/admin/quizzes/create` | Form tambah quiz dan pemilihan pertanyaan |
+| `POST` | `/admin/quizzes` | Menyimpan quiz beserta pertanyaan |
 | `GET` | `/admin/quizzes/{id}` | Detail, pertanyaan, sesi, dan performa quiz |
 | `GET` | `/admin/sessions` | Daftar, pencarian, dan filter sesi quiz |
+| `GET` | `/admin/sessions/create` | Form tambah dan penjadwalan sesi quiz |
+| `POST` | `/admin/sessions` | Menyimpan sesi serta membuat PIN dan token |
+| `POST` | `/admin/sessions/{id}/extend-pin` | Menambah atau mengaktifkan kembali masa berlaku PIN |
 | `GET` | `/admin/sessions/{id}` | Detail akses, peserta, dan performa sesi |
 | `GET` | `/admin/participants` | Daftar, pencarian, dan filter peserta |
 | `GET` | `/admin/participants/{id}` | Detail peserta dan riwayat pengerjaan quiz |

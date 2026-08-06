@@ -4,6 +4,9 @@ namespace App\Models;
 
 use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Model;
+use DateTimeImmutable;
+use DateTimeZone;
+use RuntimeException;
 
 final class QuizSessionModel extends Model
 {
@@ -30,6 +33,71 @@ final class QuizSessionModel extends Model
     ];
 
     protected $useTimestamps = true;
+
+    public function createWithCredentials(array $session): int
+    {
+        do {
+            $pin = (string) random_int(100000, 999999);
+        } while ($this->where('pin', $pin)->whereIn('status', ['WAITING', 'OPEN'])->countAllResults() > 0);
+
+        do {
+            $token = strtoupper(bin2hex(random_bytes(16)));
+        } while ($this->where('session_token', $token)->countAllResults() > 0);
+
+        $session['pin'] = $pin;
+        $session['session_token'] = $token;
+
+        return (int) $this->insert($session, true);
+    }
+
+    public function extendPinValidity(int $sessionId, int $additionalMinutes): string
+    {
+        $database = db_connect();
+        $database->transBegin();
+
+        $session = $database->query(
+            'SELECT id, pin_valid_minutes, pin_valid_from, pin_valid_until, status FROM quiz_sessions WHERE id = ? FOR UPDATE',
+            [$sessionId],
+        )->getRowArray();
+
+        if ($session === null) {
+            $database->transRollback();
+            throw new RuntimeException('Sesi quiz tidak ditemukan.');
+        }
+
+        if ($session['status'] === 'CLOSED') {
+            $database->transRollback();
+            throw new RuntimeException('PIN pada sesi yang sudah ditutup tidak dapat diperpanjang.');
+        }
+
+        $timezone = new DateTimeZone('Asia/Jakarta');
+        $now = new DateTimeImmutable('now', $timezone);
+        $currentUntil = new DateTimeImmutable($session['pin_valid_until'], $timezone);
+        $isExpired = $currentUntil <= $now;
+        $extensionBase = $isExpired ? $now : $currentUntil;
+        $newUntil = $extensionBase->modify('+' . $additionalMinutes . ' minutes');
+        $data = [
+            'pin_valid_until'   => $newUntil->format('Y-m-d H:i:s'),
+            'pin_valid_minutes' => $isExpired
+                ? $additionalMinutes
+                : (int) $session['pin_valid_minutes'] + $additionalMinutes,
+        ];
+
+        if ($isExpired) {
+            $data['pin_valid_from'] = $now->format('Y-m-d H:i:s');
+        }
+
+        $database->table('quiz_sessions')->where('id', $sessionId)->update($data);
+
+        if (! $database->transStatus()) {
+            $database->transRollback();
+            throw new RuntimeException('Masa berlaku PIN gagal diperbarui.');
+        }
+
+        $database->transCommit();
+
+        return $newUntil->format('Y-m-d H:i:s');
+    }
 
     /** @return list<array<string, mixed>> */
     public function getAdminList(array $filters, int $limit, int $offset): array
@@ -83,7 +151,8 @@ final class QuizSessionModel extends Model
             ->select("(SELECT status FROM quiz_attempts WHERE quiz_attempts.participant_id = participants.id AND quiz_attempts.session_id = participants.session_id ORDER BY id DESC LIMIT 1) AS latest_attempt_status", false)
             ->select("(SELECT passed FROM quiz_attempts WHERE quiz_attempts.participant_id = participants.id AND quiz_attempts.session_id = participants.session_id AND quiz_attempts.status = 'SUBMITTED' ORDER BY id DESC LIMIT 1) AS latest_passed", false)
             ->where('participants.session_id', $sessionId)
-            ->orderBy('participants.joined_at', 'DESC')
+            ->orderBy('best_score', 'DESC')
+            ->orderBy('participants.joined_at', 'ASC')
             ->get()
             ->getResultArray();
     }

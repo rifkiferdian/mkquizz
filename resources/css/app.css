@@ -301,6 +301,7 @@ body {
 .question-control:hover { border-color: #fed7aa; }
 .question-control:focus { border-color: var(--orange-400); box-shadow: 0 0 0 4px rgba(251, 146, 60, .11); }
 .question-control.has-error { border-color: #ef4444; }
+.question-control.question-search-control { padding-left: 2.75rem; }
 .question-error { margin-top: .4rem; color: #dc2626; font-size: .7rem; }
 
 .question-option-row {
@@ -487,6 +488,25 @@ body {
     content: "";
 }
 
+.session-summary-card {
+    display: flex;
+    min-height: 6.35rem;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid #f1f5f9;
+    border-radius: 1rem;
+    background: #fff;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, .035);
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+}
+
+.session-summary-card:hover {
+    transform: translateY(-2px);
+    border-color: #fed7aa;
+    box-shadow: 0 9px 24px rgba(255, 130, 0, .08);
+}
+
 .session-timeline { position: relative; padding-left: 1.25rem; }
 .session-timeline::before { position: absolute; top: .3rem; bottom: .3rem; left: .28rem; width: 1px; background: #e2e8f0; content: ""; }
 .session-timeline-item { position: relative; padding-bottom: 1.25rem; }
@@ -541,6 +561,57 @@ body {
     height: 15rem;
     border-radius: 9999px;
     background: rgba(255, 172, 73, .12);
+    content: "";
+}
+
+.quiz-question-picker {
+    max-height: 29rem;
+    overflow-y: auto;
+    border: 1px solid #f1f5f9;
+    border-radius: .85rem;
+}
+
+.quiz-question-choice {
+    display: flex;
+    cursor: pointer;
+    align-items: flex-start;
+    gap: .8rem;
+    padding: .9rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background .2s;
+}
+
+.quiz-question-choice:last-of-type { border-bottom: 0; }
+.quiz-question-choice:hover { background: #fff8ef; }
+.quiz-question-choice[hidden] { display: none; }
+
+.quiz-question-checkbox {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    margin-top: .15rem;
+    border: 1px solid #cbd5e1;
+    border-radius: .3rem;
+    accent-color: var(--orange-500);
+}
+
+.session-create-access {
+    position: relative;
+    overflow: hidden;
+    padding: 1.35rem;
+    border-radius: 1rem;
+    background: linear-gradient(125deg, #ff8a00, #e86f00);
+    box-shadow: 0 12px 28px rgba(232, 111, 0, .2);
+}
+
+.session-create-access::after {
+    position: absolute;
+    top: -5rem;
+    right: -4rem;
+    width: 14rem;
+    height: 14rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, .1);
     content: "";
 }
 

@@ -36,8 +36,10 @@ $statusMeta = [
 <div class="mx-auto max-w-7xl">
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div><p class="text-xs font-bold uppercase tracking-[.18em] text-orange-500">Live Quiz Management</p><h2 class="mt-1 text-lg font-bold text-slate-800">Daftar Sesi Quiz</h2><p class="mt-1 text-xs text-slate-400">Pantau akses PIN, peserta, dan aktivitas setiap sesi.</p></div>
-        <div class="inline-flex items-center gap-2 rounded-xl border border-green-100 bg-white px-4 py-3 text-xs text-slate-500 shadow-sm"><span class="status-dot size-2 rounded-full bg-green-500"></span><span><strong class="text-slate-700"><?= $summary['open'] ?></strong> sesi sedang dibuka</span></div>
+        <div class="flex flex-wrap items-center gap-3"><div class="inline-flex items-center gap-2 rounded-xl border border-green-100 bg-white px-4 py-3 text-xs text-slate-500 shadow-sm"><span class="status-dot size-2 rounded-full bg-green-500"></span><span><strong class="text-slate-700"><?= $summary['open'] ?></strong> sesi sedang dibuka</span></div><?php if (session('admin_role') !== 'PRESENTER'): ?><a href="<?= site_url('admin/sessions/create') ?>" class="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-xs font-bold text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600"><svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Tambah Sesi</a><?php endif ?></div>
     </div>
+
+    <?php if (session('success')): ?><div class="mt-5 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700" role="status"><?= esc(session('success')) ?></div><?php endif ?>
 
     <section class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Ringkasan sesi quiz">
         <?php foreach ([['Total Sesi', $summary['total'], 'bg-blue-50 text-blue-500'], ['Sedang Dibuka', $summary['open'], 'bg-green-50 text-green-600'], ['Menunggu', $summary['waiting'], 'bg-orange-50 text-orange-600'], ['Sudah Ditutup', $summary['closed'], 'bg-slate-100 text-slate-500']] as [$label, $value, $color]): ?>

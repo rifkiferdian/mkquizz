@@ -362,7 +362,7 @@ CREATE TABLE `quiz_sessions` (
   `session_name` varchar(200) NOT NULL,
   `session_token` varchar(100) NOT NULL,
   `pin` varchar(10) NOT NULL,
-  `pin_valid_minutes` int(10) UNSIGNED NOT NULL DEFAULT 5,
+  `pin_valid_minutes` int(10) UNSIGNED NOT NULL DEFAULT 2,
   `pin_valid_from` datetime NOT NULL,
   `pin_valid_until` datetime NOT NULL,
   `max_participants` int(10) UNSIGNED DEFAULT NULL,
