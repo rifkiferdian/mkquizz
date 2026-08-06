@@ -3,6 +3,7 @@
 namespace App\Controllers\Participant;
 
 use App\Controllers\BaseController;
+use App\Models\QuizSessionModel;
 use App\Services\ParticipantAccessService;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\RedirectResponse;
@@ -87,6 +88,24 @@ final class QuizAccessController extends BaseController
             'title'       => 'Siap Mengikuti Quiz',
             'quizSession' => $quizSession,
             'participant' => ['name' => (string) session('participant_name')],
+        ]);
+    }
+
+    public function leaderboard(string $token): string
+    {
+        $quizSession = $this->findSession($token);
+
+        if ($quizSession === null) {
+            throw PageNotFoundException::forPageNotFound('Sesi quiz tidak ditemukan.');
+        }
+
+        $sessionModel = model(QuizSessionModel::class);
+
+        return view('admin/sessions/leaderboard', [
+            'title'        => 'Leaderboard Sesi',
+            'quizSession'  => $quizSession,
+            'participants' => $sessionModel->getParticipants((int) $quizSession['id']),
+            'performance'  => $sessionModel->getPerformance((int) $quizSession['id']),
         ]);
     }
 

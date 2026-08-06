@@ -68,6 +68,24 @@ final class QuizSessionController extends BaseController
         ]);
     }
 
+    public function leaderboard(int $id): string
+    {
+        $sessionModel = model(QuizSessionModel::class);
+        $quizSession = $sessionModel->findAdminDetail($id);
+
+        if ($quizSession === null) {
+            throw PageNotFoundException::forPageNotFound('Sesi quiz tidak ditemukan.');
+        }
+
+        return view('admin/sessions/leaderboard', [
+            'title'        => 'Leaderboard Sesi',
+            'subtitle'     => 'Peringkat dan hasil terbaik peserta pada sesi quiz.',
+            'quizSession'  => $quizSession,
+            'participants' => $sessionModel->getParticipants($id),
+            'performance'  => $sessionModel->getPerformance($id),
+        ]);
+    }
+
     public function create(): string
     {
         $timezone = new DateTimeZone('Asia/Jakarta');
