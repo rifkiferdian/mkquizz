@@ -8,6 +8,10 @@ $routes->get('/', 'Home::index');
 $routes->get('quiz/(:segment)', 'Participant\\QuizAccessController::show/$1', ['as' => 'participant.quiz.access']);
 $routes->post('quiz/(:segment)/join', 'Participant\\QuizAccessController::join/$1', ['filter' => 'csrf']);
 $routes->get('quiz/(:segment)/lobby', 'Participant\\QuizAccessController::lobby/$1', ['as' => 'participant.quiz.lobby']);
+$routes->post('quiz/(:segment)/start', 'Participant\\QuizAccessController::start/$1', ['filter' => 'csrf', 'as' => 'participant.quiz.start']);
+$routes->get('quiz/(:segment)/attempt/(:num)', 'Participant\\QuizAccessController::attempt/$1/$2', ['as' => 'participant.quiz.attempt']);
+$routes->post('quiz/(:segment)/attempt/(:num)/submit', 'Participant\\QuizAccessController::submit/$1/$2', ['filter' => 'csrf', 'as' => 'participant.quiz.submit']);
+$routes->get('quiz/(:segment)/result/(:num)', 'Participant\\QuizAccessController::result/$1/$2', ['as' => 'participant.quiz.result']);
 $routes->get('quiz/(:segment)/leaderboard', 'Participant\\QuizAccessController::leaderboard/$1', ['as' => 'participant.quiz.leaderboard']);
 
 $routes->group('admin', static function ($routes): void {
