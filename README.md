@@ -22,6 +22,9 @@ Modul yang sudah tersedia:
 - Detail quiz dengan konfigurasi, pertanyaan, jawaban benar, sesi, dan performa peserta
 - Daftar dan detail sesi quiz dengan PIN, token, peserta, serta performa sesi
 - Pembuatan sesi terjadwal dengan PIN dan token akses otomatis
+- Halaman masuk peserta per sesi dengan nama lengkap, PIN, dan validasi kapasitas
+- Link dan QR Code peserta pada detail sesi, lengkap dengan salin link dan unduh QR
+- Halaman presentasi QR ukuran besar untuk ditampilkan dan dipindai peserta
 - Daftar dan detail peserta dengan filter aktivitas, riwayat pengerjaan, nilai, dan informasi perangkat
 - Tampilan responsif bertema putih dan oranye
 
@@ -232,8 +235,12 @@ mkquizz/
 | `POST` | `/admin/sessions` | Menyimpan sesi serta membuat PIN dan token |
 | `POST` | `/admin/sessions/{id}/extend-pin` | Menambah atau mengaktifkan kembali masa berlaku PIN |
 | `GET` | `/admin/sessions/{id}` | Detail akses, peserta, dan performa sesi |
+| `GET` | `/admin/sessions/{id}/share` | Tampilan QR dan link peserta berukuran besar |
 | `GET` | `/admin/participants` | Daftar, pencarian, dan filter peserta |
 | `GET` | `/admin/participants/{id}` | Detail peserta dan riwayat pengerjaan quiz |
+| `GET` | `/quiz/{session_token}` | Halaman masuk peserta berdasarkan sesi quiz |
+| `POST` | `/quiz/{session_token}/join` | Validasi PIN dan pendaftaran peserta |
+| `GET` | `/quiz/{session_token}/lobby` | Konfirmasi peserta berhasil bergabung |
 
 Seluruh halaman panel dilindungi oleh filter `adminAuth`. Route material dan pertanyaan juga memakai filter `adminRole`, sehingga hanya `ADMIN` dan `SUPERADMIN` yang dapat mengaksesnya. Seluruh request yang mengubah data dilindungi oleh CSRF.
 

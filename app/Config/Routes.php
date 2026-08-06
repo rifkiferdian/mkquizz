@@ -5,6 +5,10 @@ use CodeIgniter\Router\RouteCollection;
 /** @var RouteCollection $routes */
 $routes->get('/', 'Home::index');
 
+$routes->get('quiz/(:segment)', 'Participant\\QuizAccessController::show/$1', ['as' => 'participant.quiz.access']);
+$routes->post('quiz/(:segment)/join', 'Participant\\QuizAccessController::join/$1', ['filter' => 'csrf']);
+$routes->get('quiz/(:segment)/lobby', 'Participant\\QuizAccessController::lobby/$1', ['as' => 'participant.quiz.lobby']);
+
 $routes->group('admin', static function ($routes): void {
     $routes->get('login', 'Admin\\AuthController::index', ['as' => 'admin.login']);
     $routes->post('login', 'Admin\\AuthController::login', ['filter' => 'csrf']);
@@ -36,6 +40,7 @@ $routes->group('admin', static function ($routes): void {
     $routes->get('sessions/create', 'Admin\\QuizSessionController::create', ['filter' => ['adminAuth', 'adminRole']]);
     $routes->post('sessions', 'Admin\\QuizSessionController::store', ['filter' => ['adminAuth', 'adminRole', 'csrf']]);
     $routes->post('sessions/(:num)/extend-pin', 'Admin\\QuizSessionController::extendPin/$1', ['filter' => ['adminAuth', 'csrf']]);
+    $routes->get('sessions/(:num)/share', 'Admin\\QuizSessionController::share/$1', ['filter' => 'adminAuth', 'as' => 'admin.session.share']);
     $routes->get('sessions/(:num)', 'Admin\\QuizSessionController::show/$1', ['filter' => 'adminAuth', 'as' => 'admin.session.detail']);
 
     $routes->get('participants', 'Admin\\ParticipantController::index', ['filter' => 'adminAuth', 'as' => 'admin.participants']);

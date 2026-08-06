@@ -54,6 +54,20 @@ final class QuizSessionController extends BaseController
         ]);
     }
 
+    public function share(int $id): string
+    {
+        $quizSession = model(QuizSessionModel::class)->findAdminDetail($id);
+
+        if ($quizSession === null) {
+            throw PageNotFoundException::forPageNotFound('Sesi quiz tidak ditemukan.');
+        }
+
+        return view('admin/sessions/share', [
+            'title'       => 'QR Peserta',
+            'quizSession' => $quizSession,
+        ]);
+    }
+
     public function create(): string
     {
         $timezone = new DateTimeZone('Asia/Jakarta');

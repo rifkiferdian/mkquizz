@@ -15,6 +15,7 @@ $attemptStatusMeta = [
     'IN_PROGRESS' => ['Dikerjakan', 'bg-orange-50 text-orange-600'],
     'EXPIRED'     => ['Kedaluwarsa', 'bg-slate-100 text-slate-500'],
 ];
+$participantAccessUrl = site_url('quiz/' . rawurlencode($quizSession['session_token']));
 ?>
 <div class="p-5 md:p-8">
 <div class="mx-auto max-w-7xl">
@@ -39,12 +40,12 @@ $attemptStatusMeta = [
         </div>
     </section>
 
-    <div class="mt-6 grid gap-4 lg:grid-cols-[1fr_1.35fr]">
+    <div class="mt-6 grid gap-4 xl:grid-cols-[.9fr_1.65fr]">
         <section class="session-access-card" aria-labelledby="session-access-title">
             <div class="relative z-10">
                 <div class="flex items-center justify-between"><div><p class="text-[.65rem] font-bold uppercase tracking-[.18em] text-orange-200">Session Access</p><h3 id="session-access-title" class="mt-1 text-sm font-bold text-white">Kode Akses Peserta</h3></div><svg class="size-6 text-orange-200" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
                 <div class="mt-6 flex items-end justify-between gap-4"><div><p class="text-[.65rem] text-orange-200">PIN SESI</p><p class="mt-1 font-mono text-4xl font-black tracking-[.22em] text-white"><?= esc($quizSession['pin']) ?></p></div><span class="rounded-full <?= $quizSession['pin_expired'] ? 'bg-red-500/30 text-red-100' : 'bg-green-500/30 text-green-100' ?> px-3 py-1.5 text-[.62rem] font-bold"><?= $quizSession['pin_expired'] ? 'KEDALUWARSA' : 'MASIH BERLAKU' ?></span></div>
-                <div class="mt-5 border-t border-white/15 pt-4"><p class="text-[.6rem] uppercase tracking-wider text-orange-200">Token Sesi</p><p class="mt-1 break-all font-mono text-xs font-semibold text-white"><?= esc($quizSession['session_token']) ?></p><p class="mt-3 text-[.65rem] text-orange-100">Berlaku hingga <?= esc(date('d M Y, H:i', strtotime($quizSession['pin_valid_until']))) ?> WIB</p></div>
+                <div class="mt-5 border-t border-white/15 pt-4"><p class="text-[.6rem] uppercase tracking-wider text-orange-200">Token Sesi</p><p class="mt-1 break-all font-mono text-xs font-semibold text-white"><?= esc($quizSession['session_token']) ?></p><a href="<?= esc($participantAccessUrl, 'attr') ?>" target="_blank" rel="noopener" class="mt-3 inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-[.65rem] font-bold text-white transition hover:bg-white/20"><svg class="size-3.5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3h7v7m0-7-9 9M10 5H5a2 2 0 0 0-2 2v12h12a2 2 0 0 0 2-2v-5"/></svg>Buka Halaman Peserta</a><p class="mt-3 text-[.65rem] text-orange-100">Berlaku hingga <?= esc(date('d M Y, H:i', strtotime($quizSession['pin_valid_until']))) ?> WIB</p></div>
                 <?php if ($quizSession['status'] !== 'CLOSED'): ?>
                     <form action="<?= site_url('admin/sessions/' . $quizSession['id'] . '/extend-pin') ?>" method="post" class="mt-5 border-t border-white/15 pt-4">
                         <?= csrf_field() ?>
@@ -58,18 +59,30 @@ $attemptStatusMeta = [
             </div>
         </section>
 
-        <section class="grid gap-4 sm:grid-cols-2" aria-label="Ringkasan sesi">
-            <?php foreach ([
-                ['Peserta', $performance['participants'], 'orang bergabung', 'bg-blue-50 text-blue-500', 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z'],
-                ['Pengerjaan', $performance['attempts'], 'total attempt', 'bg-orange-50 text-orange-600', 'M12 7v5l3 2M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z'],
-                ['Rata-rata', number_format($performance['average'], 1, ',', '.'), 'nilai peserta', 'bg-violet-50 text-violet-500', 'M4 19V9m5 10V5m5 14v-7m5 7V3'],
-                ['Kelulusan', number_format($performance['pass_rate'], 0, ',', '.') . '%', $performance['passed'] . ' peserta lulus', 'bg-green-50 text-green-600', 'm5 12 4 4L19 6'],
-            ] as [$label, $value, $unit, $color, $icon]): ?>
-                <article class="session-summary-card">
-                    <div class="grid size-11 shrink-0 place-items-center rounded-xl <?= esc($color) ?>"><svg class="size-5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="<?= esc($icon) ?>"/></svg></div>
-                    <div class="min-w-0"><p class="text-[.68rem] font-medium text-slate-400"><?= esc($label) ?></p><div class="mt-1 flex flex-wrap items-end gap-x-2 gap-y-0.5"><p class="text-2xl font-extrabold leading-none tracking-tight text-slate-800"><?= esc((string) $value) ?></p><p class="text-[.62rem] text-slate-400"><?= esc((string) $unit) ?></p></div></div>
-                </article>
-            <?php endforeach ?>
+        <section id="participant-qr-card" class="rounded-2xl border border-orange-100 bg-white p-5 shadow-sm" data-url="<?= esc($participantAccessUrl, 'attr') ?>" aria-labelledby="participant-qr-title">
+            <div class="flex items-start justify-between gap-4"><div><p class="text-[.62rem] font-bold uppercase tracking-[.16em] text-orange-500">Participant Access</p><h3 id="participant-qr-title" class="mt-1 text-sm font-bold text-slate-800">QR Code & Ringkasan Sesi</h3><p class="mt-1 text-[.68rem] leading-relaxed text-slate-400">Bagikan akses sekaligus pantau aktivitas peserta.</p></div><div class="grid size-9 shrink-0 place-items-center rounded-xl bg-orange-50 text-orange-500"><svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h-3zM18 18h3v3h-3zM18 14h3"/></svg></div></div>
+
+            <div class="session-overview-grid mt-5">
+                <a href="<?= site_url('admin/sessions/' . $quizSession['id'] . '/share') ?>" target="_blank" rel="noopener" class="session-qr-preview group" title="Buka QR Code ukuran besar"><div class="session-qr-frame"><canvas id="participant-qr-code" class="block max-w-full" aria-label="QR Code halaman peserta"></canvas><p id="participant-qr-error" class="hidden px-4 py-10 text-center text-xs text-red-500">QR Code gagal dibuat. Gunakan link peserta di bawah.</p></div><span class="session-qr-preview-label"><svg class="size-3.5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3h7v7m0-7-9 9M10 5H5a2 2 0 0 0-2 2v12h12a2 2 0 0 0 2-2v-5"/></svg>Perbesar QR</span></a>
+
+                <section class="grid gap-3 sm:grid-cols-2" aria-label="Ringkasan sesi">
+                    <?php foreach ([
+                        ['Peserta', $performance['participants'], 'orang bergabung', 'bg-blue-50 text-blue-500', 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z'],
+                        ['Pengerjaan', $performance['attempts'], 'total attempt', 'bg-orange-50 text-orange-600', 'M12 7v5l3 2M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z'],
+                        ['Rata-rata', number_format($performance['average'], 1, ',', '.'), 'nilai peserta', 'bg-violet-50 text-violet-500', 'M4 19V9m5 10V5m5 14v-7m5 7V3'],
+                        ['Kelulusan', number_format($performance['pass_rate'], 0, ',', '.') . '%', $performance['passed'] . ' peserta lulus', 'bg-green-50 text-green-600', 'm5 12 4 4L19 6'],
+                    ] as [$label, $value, $unit, $color, $icon]): ?>
+                        <article class="session-summary-card session-summary-card-compact">
+                            <div class="grid size-10 shrink-0 place-items-center rounded-xl <?= esc($color) ?>"><svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="<?= esc($icon) ?>"/></svg></div>
+                            <div class="min-w-0"><p class="text-[.65rem] font-medium text-slate-400"><?= esc($label) ?></p><div class="mt-1"><p class="text-xl font-extrabold leading-none tracking-tight text-slate-800"><?= esc((string) $value) ?></p><p class="mt-1 truncate text-[.58rem] text-slate-400"><?= esc((string) $unit) ?></p></div></div>
+                        </article>
+                    <?php endforeach ?>
+                </section>
+            </div>
+
+            <div class="mt-4 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5"><p class="text-[.58rem] font-bold uppercase tracking-wider text-slate-400">Link Peserta</p><p class="mt-1 truncate font-mono text-[.65rem] text-slate-600" title="<?= esc($participantAccessUrl, 'attr') ?>"><?= esc($participantAccessUrl) ?></p></div>
+            <div class="participant-access-actions mt-3"><button id="copy-participant-url" type="button" class="session-qr-action"><svg class="size-3.5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></svg>Salin Link</button><a id="download-participant-qr" href="#" download="qr-<?= esc($quizSession['session_token'], 'attr') ?>.png" class="session-qr-action pointer-events-none opacity-50"><svg class="size-3.5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m-4-4 4 4 4-4M5 21h14"/></svg>Unduh QR</a><a href="<?= esc($participantAccessUrl, 'attr') ?>" target="_blank" rel="noopener" class="session-qr-action border-orange-200 bg-orange-50 text-orange-600"><svg class="size-3.5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3h7v7m0-7-9 9M10 5H5a2 2 0 0 0-2 2v12h12a2 2 0 0 0 2-2v-5"/></svg>Buka Link</a></div>
+            <p id="participant-copy-status" class="mt-2 min-h-4 text-center text-[.62rem] font-semibold text-green-600" aria-live="polite"></p>
         </section>
     </div>
 
@@ -122,4 +135,8 @@ $attemptStatusMeta = [
     </div>
 </div>
 </div>
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script src="<?= base_url('assets/js/session-qrcode.js') ?>" defer></script>
 <?= $this->endSection() ?>
