@@ -17,6 +17,7 @@ Modul yang sudah tersedia:
 - Dukungan tipe pilihan ganda dan benar/salah
 - Daftar quiz dengan pencarian, filter, statistik konten, sesi, dan pengerjaan
 - Detail quiz dengan konfigurasi, pertanyaan, jawaban benar, sesi, dan performa peserta
+- Daftar dan detail sesi quiz dengan PIN, token, peserta, serta performa sesi
 - Tampilan responsif bertema putih dan oranye
 
 Skema database juga sudah menyediakan tabel untuk pertanyaan, pilihan jawaban, quiz, sesi, peserta, pengerjaan quiz, jawaban peserta, serta audit log. Antarmuka untuk modul-modul tersebut akan dikembangkan secara bertahap.
@@ -176,7 +177,7 @@ mkquizz/
 │   ├── Controllers/Admin/  # Controller autentikasi, dashboard, dan material
 │   ├── Database/Seeds/     # Seeder akun administrator
 │   ├── Filters/            # Filter autentikasi administrator
-│   ├── Models/             # Model user, dashboard, material, pertanyaan, dan quiz
+│   ├── Models/             # Model user, dashboard, material, pertanyaan, quiz, dan sesi
 │   ├── Services/           # Transaksi penyimpanan pertanyaan dan opsi jawaban
 │   └── Views/admin/        # Layout dan halaman admin
 ├── public/
@@ -212,6 +213,8 @@ mkquizz/
 | `POST` | `/admin/questions/{id}/delete` | Menghapus pertanyaan dan opsi |
 | `GET` | `/admin/quizzes` | Daftar, pencarian, dan filter quiz |
 | `GET` | `/admin/quizzes/{id}` | Detail, pertanyaan, sesi, dan performa quiz |
+| `GET` | `/admin/sessions` | Daftar, pencarian, dan filter sesi quiz |
+| `GET` | `/admin/sessions/{id}` | Detail akses, peserta, dan performa sesi |
 
 Route dashboard dan material dilindungi oleh filter `adminAuth`. Seluruh request yang mengubah data juga dilindungi oleh CSRF.
 

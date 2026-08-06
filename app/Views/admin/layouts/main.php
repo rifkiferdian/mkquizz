@@ -39,7 +39,11 @@
                 <svg class="size-5 shrink-0" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11h6M9 15h4M8 3h8l3 3v15H5V3h3Z"/></svg>
                 <span class="sidebar-label">Quiz</span>
             </a>
-            <?php foreach ([['Sesi Quiz', 'M8 2v3m8-3v3M3 9h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z'], ['Peserta', 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87']] as [$label, $path]): ?>
+            <a href="<?= site_url('admin/sessions') ?>" class="nav-link <?= $activeMenu === 'sessions' ? 'active' : '' ?> flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-semibold">
+                <svg class="size-5 shrink-0" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 2v3m8-3v3M3 9h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z"/></svg>
+                <span class="sidebar-label">Sesi Quiz</span>
+            </a>
+            <?php foreach ([['Peserta', 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87']] as [$label, $path]): ?>
                 <span class="nav-link flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium opacity-70" title="Modul berikutnya">
                     <svg class="size-5 shrink-0" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="<?= esc($path) ?>"/></svg>
                     <span class="sidebar-label"><?= esc($label) ?></span>

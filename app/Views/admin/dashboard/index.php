@@ -87,7 +87,7 @@
                 <?php foreach ($activeSessions as $quizSession): ?>
                     <article class="rounded-xl border border-slate-100 bg-slate-50/70 p-4">
                         <div class="flex items-start justify-between gap-3">
-                            <div class="min-w-0"><p class="truncate text-xs font-bold text-slate-700"><?= esc($quizSession['session_name']) ?></p><p class="mt-1 truncate text-[.68rem] text-slate-400"><?= esc($quizSession['quiz_title']) ?></p></div>
+                            <div class="min-w-0"><a href="<?= site_url('admin/sessions/' . $quizSession['id']) ?>" class="truncate text-xs font-bold text-slate-700 transition hover:text-orange-600"><?= esc($quizSession['session_name']) ?></a><p class="mt-1 truncate text-[.68rem] text-slate-400"><?= esc($quizSession['quiz_title']) ?></p></div>
                             <span class="rounded-full bg-green-50 px-2 py-1 text-[.58rem] font-bold text-green-600"><?= esc($quizSession['status']) ?></span>
                         </div>
                         <div class="mt-4 flex items-center justify-between border-t border-slate-200/70 pt-3">

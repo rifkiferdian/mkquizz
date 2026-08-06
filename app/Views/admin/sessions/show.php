@@ -1,0 +1,94 @@
+<?= $this->extend('admin/layouts/main') ?>
+
+<?= $this->section('content') ?>
+<?php
+$statusMeta = [
+    'OPEN'    => ['Dibuka', 'bg-green-50 text-green-600 border-green-100', 'bg-green-500'],
+    'WAITING' => ['Menunggu', 'bg-orange-50 text-orange-600 border-orange-100', 'bg-orange-500'],
+    'CLOSED'  => ['Ditutup', 'bg-slate-100 text-slate-500 border-slate-200', 'bg-slate-400'],
+    'DRAFT'   => ['Draft', 'bg-blue-50 text-blue-500 border-blue-100', 'bg-blue-500'],
+];
+[$statusLabel, $statusClass, $statusDot] = $statusMeta[$quizSession['status']] ?? [$quizSession['status'], 'bg-slate-100 text-slate-500 border-slate-200', 'bg-slate-400'];
+
+$attemptStatusMeta = [
+    'SUBMITTED'   => ['Selesai', 'bg-green-50 text-green-600'],
+    'IN_PROGRESS' => ['Dikerjakan', 'bg-orange-50 text-orange-600'],
+    'EXPIRED'     => ['Kedaluwarsa', 'bg-slate-100 text-slate-500'],
+];
+?>
+<div class="p-5 md:p-8">
+<div class="mx-auto max-w-7xl">
+    <a href="<?= site_url('admin/sessions') ?>" class="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 transition hover:text-orange-600"><svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>Kembali ke Daftar Sesi</a>
+
+    <section class="quiz-detail-hero mt-5" aria-labelledby="session-detail-title">
+        <div class="relative z-10">
+            <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                <div class="flex items-start gap-4">
+                    <div class="grid size-14 shrink-0 place-items-center rounded-2xl bg-orange-500 text-white shadow-lg shadow-orange-500/20"><svg class="size-7" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 2v3m8-3v3M3 9h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z"/></svg></div>
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2"><span class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[.62rem] font-bold <?= esc($statusClass) ?>"><span class="size-1.5 rounded-full <?= esc($statusDot) ?>"></span><?= esc(strtoupper($statusLabel)) ?></span><span class="rounded-full border border-orange-100 bg-orange-50 px-2.5 py-1 text-[.62rem] font-bold text-orange-600"><?= esc($quizSession['material_code'] ?: 'MATERIAL') ?></span></div>
+                        <h2 id="session-detail-title" class="mt-3 max-w-3xl text-2xl font-extrabold tracking-tight text-slate-900"><?= esc($quizSession['session_name']) ?></h2>
+                        <a href="<?= site_url('admin/quizzes/' . $quizSession['quiz_id']) ?>" class="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-orange-600"><svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11h6M9 15h4M8 3h8l3 3v15H5V3h3Z"/></svg><?= esc($quizSession['quiz_title']) ?></a>
+                    </div>
+                </div>
+                <div class="shrink-0 rounded-xl border border-orange-100 bg-white/80 px-4 py-3 text-xs"><p class="text-slate-400">Dibuat oleh</p><p class="mt-1 font-bold text-slate-700"><?= esc($quizSession['creator_name'] ?? '-') ?></p><p class="mt-1 text-[.65rem] text-slate-400"><?= esc(date('d M Y, H:i', strtotime($quizSession['created_at']))) ?></p></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="mt-6 grid gap-4 lg:grid-cols-[1fr_1.35fr]">
+        <section class="session-access-card" aria-labelledby="session-access-title">
+            <div class="relative z-10">
+                <div class="flex items-center justify-between"><div><p class="text-[.65rem] font-bold uppercase tracking-[.18em] text-orange-200">Session Access</p><h3 id="session-access-title" class="mt-1 text-sm font-bold text-white">Kode Akses Peserta</h3></div><svg class="size-6 text-orange-200" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+                <div class="mt-6 flex items-end justify-between gap-4"><div><p class="text-[.65rem] text-orange-200">PIN SESI</p><p class="mt-1 font-mono text-4xl font-black tracking-[.22em] text-white"><?= esc($quizSession['pin']) ?></p></div><span class="rounded-full <?= $quizSession['pin_expired'] ? 'bg-red-500/30 text-red-100' : 'bg-green-500/30 text-green-100' ?> px-3 py-1.5 text-[.62rem] font-bold"><?= $quizSession['pin_expired'] ? 'KEDALUWARSA' : 'MASIH BERLAKU' ?></span></div>
+                <div class="mt-5 border-t border-white/15 pt-4"><p class="text-[.6rem] uppercase tracking-wider text-orange-200">Token Sesi</p><p class="mt-1 break-all font-mono text-xs font-semibold text-white"><?= esc($quizSession['session_token']) ?></p></div>
+            </div>
+        </section>
+
+        <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Ringkasan sesi">
+            <?php foreach ([['Peserta', $performance['participants'], 'orang', 'bg-blue-50 text-blue-500'], ['Pengerjaan', $performance['attempts'], 'attempt', 'bg-orange-50 text-orange-600'], ['Rata-rata', number_format($performance['average'], 1, ',', '.'), 'nilai', 'bg-violet-50 text-violet-500'], ['Kelulusan', number_format($performance['pass_rate'], 0, ',', '.') . '%', $performance['passed'] . ' lulus', 'bg-green-50 text-green-600']] as [$label, $value, $unit, $color]): ?>
+                <article class="stat-card flex flex-col justify-between rounded-2xl border border-slate-100 bg-white p-4"><div class="grid size-8 place-items-center rounded-lg <?= esc($color) ?>"><svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg></div><div class="mt-4"><p class="text-[.65rem] text-slate-400"><?= esc($label) ?></p><p class="mt-1 text-xl font-extrabold text-slate-800"><?= esc((string) $value) ?></p><p class="mt-1 text-[.58rem] text-slate-400"><?= esc((string) $unit) ?></p></div></article>
+            <?php endforeach ?>
+        </section>
+    </div>
+
+    <div class="mt-6 grid items-start gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(20rem,.6fr)]">
+        <section class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm" aria-labelledby="participant-list-title">
+            <div class="flex items-center justify-between border-b border-orange-100 bg-gradient-to-r from-white to-orange-50 px-5 py-4"><div><h3 id="participant-list-title" class="text-sm font-bold text-slate-800">Daftar Peserta</h3><p class="mt-1 text-[.68rem] text-slate-400">Peserta yang bergabung dan hasil pengerjaannya</p></div><span class="rounded-full bg-orange-100 px-3 py-1.5 text-[.65rem] font-bold text-orange-600"><?= count($participants) ?> peserta</span></div>
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[44rem] text-left"><thead class="bg-slate-50/70 text-[.62rem] uppercase tracking-wider text-slate-400"><tr><th class="px-5 py-3 font-semibold">Peserta</th><th class="px-5 py-3 font-semibold">Bergabung</th><th class="px-5 py-3 font-semibold">Pengerjaan</th><th class="px-5 py-3 font-semibold">Nilai Terbaik</th><th class="px-5 py-3 font-semibold">Hasil</th></tr></thead>
+                <tbody class="divide-y divide-slate-100 text-xs">
+                <?php if ($participants === []): ?><tr><td colspan="5" class="px-5 py-12 text-center text-slate-400">Belum ada peserta yang bergabung.</td></tr><?php endif ?>
+                <?php foreach ($participants as $participant): ?>
+                    <?php [$attemptLabel, $attemptClass] = $attemptStatusMeta[$participant['latest_attempt_status']] ?? ['Belum mulai', 'bg-slate-100 text-slate-500']; ?>
+                    <tr class="hover:bg-orange-50/30"><td class="px-5 py-4"><div class="flex items-center gap-3"><div class="grid size-9 shrink-0 place-items-center rounded-full bg-orange-100 text-xs font-bold text-orange-600"><?= esc(strtoupper(substr($participant['name'], 0, 2))) ?></div><div><p class="font-bold text-slate-700"><?= esc($participant['name']) ?></p><p class="mt-1 font-mono text-[.58rem] text-slate-400"><?= esc($participant['participant_token']) ?></p></div></div></td><td class="px-5 py-4 text-slate-500"><?= esc(date('d M Y', strtotime($participant['joined_at']))) ?><p class="mt-1 text-[.6rem] text-slate-400"><?= esc(date('H:i', strtotime($participant['joined_at']))) ?> WIB</p></td><td class="px-5 py-4"><p class="font-bold text-slate-700"><?= (int) $participant['attempt_count'] ?> kali</p><span class="mt-1 inline-block rounded-full <?= esc($attemptClass) ?> px-2 py-1 text-[.58rem] font-bold"><?= esc(strtoupper($attemptLabel)) ?></span></td><td class="px-5 py-4"><p class="text-lg font-extrabold <?= $participant['best_score'] !== null ? 'text-orange-600' : 'text-slate-400' ?>"><?= $participant['best_score'] !== null ? number_format((float) $participant['best_score'], 1, ',', '.') : '-' ?></p></td><td class="px-5 py-4"><?php if ($participant['latest_passed'] !== null): ?><span class="rounded-full <?= $participant['latest_passed'] ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600' ?> px-2.5 py-1 text-[.6rem] font-bold"><?= $participant['latest_passed'] ? 'LULUS' : 'TIDAK LULUS' ?></span><?php else: ?><span class="text-[.65rem] text-slate-400">Belum ada hasil</span><?php endif ?></td></tr>
+                <?php endforeach ?>
+                </tbody></table>
+            </div>
+        </section>
+
+        <aside class="space-y-6">
+            <section class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm" aria-labelledby="session-config-title">
+                <h3 id="session-config-title" class="text-sm font-bold text-slate-800">Konfigurasi Sesi</h3><p class="mt-1 text-[.68rem] text-slate-400">Batas akses dan peserta</p>
+                <div class="mt-4 divide-y divide-slate-100">
+                    <div class="flex items-center justify-between py-3"><span class="text-xs text-slate-500">Durasi quiz</span><span class="text-xs font-bold text-slate-700"><?= (int) $quizSession['duration_minutes'] ?> menit</span></div>
+                    <div class="flex items-center justify-between py-3"><span class="text-xs text-slate-500">Passing grade</span><span class="text-xs font-bold text-slate-700"><?= number_format((float) $quizSession['passing_score'], 0, ',', '.') ?></span></div>
+                    <div class="flex items-center justify-between py-3"><span class="text-xs text-slate-500">Masa berlaku PIN</span><span class="text-xs font-bold text-slate-700"><?= (int) $quizSession['pin_valid_minutes'] ?> menit</span></div>
+                    <div class="flex items-center justify-between py-3"><span class="text-xs text-slate-500">Maksimal peserta</span><span class="text-xs font-bold text-slate-700"><?= $quizSession['max_participants'] !== null ? (int) $quizSession['max_participants'] : 'Tanpa batas' ?></span></div>
+                    <div class="flex items-center justify-between py-3"><span class="text-xs text-slate-500">Nama duplikat</span><span class="rounded-full <?= $quizSession['allow_duplicate_name'] ? 'bg-green-50 text-green-600' : 'bg-slate-100 text-slate-500' ?> px-2 py-1 text-[.58rem] font-bold"><?= $quizSession['allow_duplicate_name'] ? 'DIIZINKAN' : 'DITOLAK' ?></span></div>
+                </div>
+            </section>
+
+            <section class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm" aria-labelledby="session-timeline-title">
+                <h3 id="session-timeline-title" class="text-sm font-bold text-slate-800">Timeline Sesi</h3>
+                <div class="session-timeline mt-5">
+                    <div class="session-timeline-item"><span class="session-timeline-dot bg-blue-500"></span><p class="text-xs font-semibold text-slate-600">PIN mulai berlaku</p><p class="mt-1 text-[.65rem] text-slate-400"><?= esc(date('d M Y, H:i', strtotime($quizSession['pin_valid_from']))) ?></p></div>
+                    <div class="session-timeline-item"><span class="session-timeline-dot bg-orange-500"></span><p class="text-xs font-semibold text-slate-600">Sesi dibuka</p><p class="mt-1 text-[.65rem] text-slate-400"><?= $quizSession['opened_at'] ? esc(date('d M Y, H:i', strtotime($quizSession['opened_at']))) : 'Belum dibuka' ?></p></div>
+                    <div class="session-timeline-item"><span class="session-timeline-dot <?= $quizSession['closed_at'] ? 'bg-slate-500' : 'bg-slate-300' ?>"></span><p class="text-xs font-semibold text-slate-600">Sesi ditutup</p><p class="mt-1 text-[.65rem] text-slate-400"><?= $quizSession['closed_at'] ? esc(date('d M Y, H:i', strtotime($quizSession['closed_at']))) : 'Belum ditutup' ?></p></div>
+                </div>
+            </section>
+        </aside>
+    </div>
+</div>
+</div>
+<?= $this->endSection() ?>
