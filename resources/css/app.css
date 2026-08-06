@@ -640,6 +640,84 @@ body {
     height: auto !important;
 }
 
+.qr-pin-access-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .75rem;
+}
+
+.qr-pin-card {
+    min-width: 0;
+    padding: .9rem;
+    border: 1px solid #ffedd5;
+    border-radius: .8rem;
+    background: #fff;
+    transition: border-color .2s, background .2s;
+}
+
+.qr-pin-label {
+    color: #64748b;
+    font-size: .6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+}
+
+.qr-pin-value {
+    min-width: 7rem;
+    color: #1e293b;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 1.25rem;
+    font-weight: 900;
+    letter-spacing: .18em;
+    line-height: 1;
+}
+
+.qr-pin-toggle {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    place-items: center;
+    border: 1px solid #fed7aa;
+    border-radius: .55rem;
+    color: #ea580c;
+    background: #fff7ed;
+    transition: color .2s, background .2s, box-shadow .2s;
+}
+
+.qr-pin-toggle:hover,
+.qr-pin-toggle:focus-visible { color: #fff; background: #f97316; outline: 0; box-shadow: 0 0 0 3px rgba(249, 115, 22, .13); }
+
+.qr-pin-status {
+    flex-shrink: 0;
+    padding: .25rem .5rem;
+    border-radius: 9999px;
+    font-size: .52rem;
+    font-weight: 800;
+}
+
+.qr-pin-countdown {
+    margin-top: .65rem;
+    color: #1e293b;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 1.45rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: .04em;
+    font-variant-numeric: tabular-nums;
+}
+
+.qr-pin-card.is-active { border-color: #bbf7d0; background: #f0fdf4; }
+.qr-pin-card.is-active .qr-pin-status { color: #15803d; background: #dcfce7; }
+.qr-pin-card.is-active #pin-validity-message { color: #15803d; }
+.qr-pin-card.is-waiting { border-color: #fde68a; background: #fffbeb; }
+.qr-pin-card.is-waiting .qr-pin-status { color: #a16207; background: #fef3c7; }
+.qr-pin-card.is-waiting #pin-validity-message { color: #a16207; }
+.qr-pin-card.is-expired { border-color: #fecaca; background: #fef2f2; }
+.qr-pin-card.is-expired .qr-pin-status { color: #b91c1c; background: #fee2e2; }
+.qr-pin-card.is-expired #pin-validity-message { color: #b91c1c; }
+
 .leaderboard-hero {
     position: relative;
     overflow: hidden;
@@ -980,6 +1058,7 @@ body {
     .participant-filter-panel { padding: 1rem; }
     .qr-share-card { padding: 1.25rem; }
     .qr-share-frame { min-height: 19rem; }
+    .qr-pin-access-grid { grid-template-columns: 1fr; }
     .session-overview-grid { grid-template-columns: 1fr; }
     .participant-access-actions { grid-template-columns: 1fr; }
 }
