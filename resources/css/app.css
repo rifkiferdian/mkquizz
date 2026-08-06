@@ -664,19 +664,20 @@ body {
 }
 
 .qr-pin-value {
-    min-width: 7rem;
+    min-width: 10rem;
     color: #1e293b;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 1.25rem;
+    font-size: 1.9rem;
     font-weight: 900;
-    letter-spacing: .18em;
+    letter-spacing: .2em;
     line-height: 1;
+    font-variant-numeric: tabular-nums;
 }
 
 .qr-pin-toggle {
     display: grid;
-    width: 2rem;
-    height: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
     cursor: pointer;
     place-items: center;
     border: 1px solid #fed7aa;
@@ -685,6 +686,8 @@ body {
     background: #fff7ed;
     transition: color .2s, background .2s, box-shadow .2s;
 }
+
+.qr-pin-toggle svg { width: 1.15rem; height: 1.15rem; }
 
 .qr-pin-toggle:hover,
 .qr-pin-toggle:focus-visible { color: #fff; background: #f97316; outline: 0; box-shadow: 0 0 0 3px rgba(249, 115, 22, .13); }
@@ -1059,6 +1062,7 @@ body {
     .qr-share-card { padding: 1.25rem; }
     .qr-share-frame { min-height: 19rem; }
     .qr-pin-access-grid { grid-template-columns: 1fr; }
+    .qr-pin-value { min-width: 8.5rem; font-size: 1.65rem; }
     .session-overview-grid { grid-template-columns: 1fr; }
     .participant-access-actions { grid-template-columns: 1fr; }
 }
