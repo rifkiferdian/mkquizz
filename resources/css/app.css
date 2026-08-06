@@ -1237,6 +1237,101 @@ body {
 .result-secondary-action { border: 1px solid #fed7aa; color: #c2410c; background: #fff; }
 .result-secondary-action:hover { background: #fff7ed; }
 
+.participant-review-main {
+    width: min(100%, 52rem);
+    margin-inline: auto;
+    padding: 1.5rem 1rem 3rem;
+}
+
+.review-score {
+    min-width: 5.5rem;
+    padding: .75rem 1rem;
+    border: 1px solid #fed7aa;
+    border-radius: .8rem;
+    text-align: center;
+    background: #fff7ed;
+}
+
+.review-score p { color: #9a3412; font-size: .58rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; }
+.review-score strong { display: block; margin-top: .2rem; color: #ea580c; font-size: 1.65rem; line-height: 1; }
+
+.review-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem 1.25rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.review-legend span { display: inline-flex; align-items: center; gap: .4rem; color: #64748b; font-size: .65rem; }
+.review-legend i { width: .65rem; height: .65rem; border-radius: 9999px; }
+.review-legend i.is-correct { background: #22c55e; }
+.review-legend i.is-wrong { background: #ef4444; }
+.review-legend i.is-selected { background: #f97316; }
+
+.review-question-card { border-left-width: 4px; }
+.review-question-card.is-correct { border-left-color: #22c55e; }
+.review-question-card.is-wrong { border-left-color: #ef4444; }
+.review-question-card.is-empty { border-left-color: #94a3b8; }
+
+.review-question-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem 1.75rem 1rem;
+}
+
+.review-answer-status,
+.review-option-label {
+    display: inline-flex;
+    flex-shrink: 0;
+    border-radius: 9999px;
+    font-size: .6rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.review-answer-status { padding: .4rem .65rem; }
+.review-answer-status.is-correct { color: #15803d; background: #f0fdf4; }
+.review-answer-status.is-wrong { color: #b91c1c; background: #fef2f2; }
+.review-answer-status.is-empty { color: #64748b; background: #f1f5f9; }
+
+.review-option {
+    display: flex;
+    min-height: 3.25rem;
+    align-items: center;
+    gap: .8rem;
+    padding: .7rem .8rem;
+    border: 1px solid #f1f5f9;
+    border-radius: .65rem;
+    background: #fff;
+}
+
+.review-option.is-correct { border-color: #86efac; background: #f0fdf4; }
+.review-option.is-wrong { border-color: #fca5a5; background: #fef2f2; }
+.review-option.is-selected:not(.is-wrong) { box-shadow: inset 3px 0 #f97316; }
+.review-option.is-correct .google-option-marker { border-color: #22c55e; color: #fff; background: #22c55e; }
+.review-option.is-wrong .google-option-marker { border-color: #ef4444; color: #fff; background: #ef4444; }
+
+.review-option-label { padding: .3rem .55rem; }
+.review-option-label.is-correct { color: #15803d; background: #dcfce7; }
+.review-option-label.is-wrong { color: #b91c1c; background: #fee2e2; }
+
+.review-explanation {
+    display: flex;
+    align-items: flex-start;
+    gap: .7rem;
+    margin: 0 1.75rem 1.5rem;
+    padding: .85rem;
+    border: 1px solid #dbeafe;
+    border-radius: .7rem;
+    background: #eff6ff;
+}
+
+.review-footer-actions { display: flex; justify-content: flex-end; gap: .75rem; margin-top: 1.25rem; }
+
 @media (max-width: 780px) {
     .participant-quiz-page { overflow-x: hidden; }
 
@@ -1350,6 +1445,14 @@ body {
     }
 
     .result-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .participant-review-main { padding: .85rem .65rem 2rem; }
+    .review-question-heading { padding: 1.1rem 1rem .8rem; }
+    .review-question-heading h2 { overflow-wrap: anywhere; line-height: 1.55; }
+    .review-option { align-items: flex-start; flex-wrap: wrap; gap: .65rem; padding: .75rem .65rem; }
+    .review-option > span:nth-child(2) { padding-top: .25rem; overflow-wrap: anywhere; }
+    .review-option-label { margin-left: 2.55rem; }
+    .review-explanation { margin: 0 1rem 1.1rem; }
 }
 
 @media (max-width: 520px) {
@@ -1366,6 +1469,10 @@ body {
     .participant-result-main { align-items: flex-start; padding-top: 1rem; }
     .participant-result-card .result-primary-action,
     .participant-result-card .result-secondary-action { width: 100%; }
+    .review-question-heading { flex-direction: column; gap: .7rem; }
+    .review-answer-status { align-self: flex-start; }
+    .review-footer-actions { align-items: stretch; flex-direction: column-reverse; }
+    .review-footer-actions a { width: 100%; }
 }
 
 /* Public leaderboard monitor layout */

@@ -230,6 +230,38 @@ final class QuizAccessController extends BaseController
         ]);
     }
 
+    public function review(string $token, int $attemptId): string|RedirectResponse
+    {
+        $quizSession = $this->findSession($token);
+
+        if ($quizSession === null) {
+            throw PageNotFoundException::forPageNotFound('Sesi quiz tidak ditemukan.');
+        }
+
+        $participant = $this->findCurrentParticipant((int) $quizSession['id']);
+        if ($participant === null) {
+            return $this->participantLoginRedirect($token);
+        }
+
+        $attempt = $this->findAttempt($attemptId, (int) $participant['id'], (int) $quizSession['id']);
+        if ($attempt === null || $attempt['status'] !== 'SUBMITTED') {
+            throw PageNotFoundException::forPageNotFound('Review jawaban tidak ditemukan.');
+        }
+
+        if (! (bool) $attempt['allow_review']) {
+            return $this->resultRedirect($token, $attemptId)
+                ->with('error', 'Review jawaban dinonaktifkan untuk quiz ini.');
+        }
+
+        return view('participant/quiz/review', [
+            'title'       => 'Review Jawaban',
+            'quizSession' => $quizSession,
+            'participant' => $participant,
+            'attempt'     => $attempt,
+            'questions'   => $this->getReviewQuestions($attemptId, (bool) $attempt['shuffle_options']),
+        ]);
+    }
+
     public function leaderboard(string $token): string
     {
         $quizSession = $this->findSession($token);
@@ -327,6 +359,50 @@ final class QuizAccessController extends BaseController
             }
 
             $question['options'] = $options;
+        }
+        unset($question);
+
+        return $questions;
+    }
+
+    /** @return list<array<string, mixed>> */
+    private function getReviewQuestions(int $attemptId, bool $shuffleOptions): array
+    {
+        $database = db_connect();
+        $questions = $database->table('attempt_questions')
+            ->select('attempt_questions.question_id, attempt_questions.question_order, questions.question_text, questions.question_type, questions.explanation')
+            ->join('questions', 'questions.id = attempt_questions.question_id')
+            ->where('attempt_questions.attempt_id', $attemptId)
+            ->orderBy('attempt_questions.question_order', 'ASC')
+            ->get()
+            ->getResultArray();
+
+        $answers = $database->table('participant_answers')
+            ->where('attempt_id', $attemptId)
+            ->get()
+            ->getResultArray();
+        $answersByQuestion = [];
+        foreach ($answers as $answer) {
+            $answersByQuestion[(int) $answer['question_id']] = $answer;
+        }
+
+        foreach ($questions as &$question) {
+            $options = $database->table('question_options')
+                ->select('id, question_id, option_key, option_text, is_correct')
+                ->where('question_id', (int) $question['question_id'])
+                ->orderBy('sort_order', 'ASC')
+                ->get()
+                ->getResultArray();
+
+            if ($shuffleOptions) {
+                usort($options, static fn (array $first, array $second): int => strcmp(
+                    hash('sha256', $attemptId . ':' . $first['id']),
+                    hash('sha256', $attemptId . ':' . $second['id']),
+                ));
+            }
+
+            $question['options'] = $options;
+            $question['answer'] = $answersByQuestion[(int) $question['question_id']] ?? null;
         }
         unset($question);
 

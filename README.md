@@ -25,6 +25,7 @@ Modul yang sudah tersedia:
 - Halaman masuk peserta per sesi dengan nama lengkap, PIN, dan validasi kapasitas
 - Halaman pengerjaan quiz bergaya Google Form dengan timer, progress jawaban, dan submit otomatis
 - Penilaian jawaban di server serta halaman hasil berisi nilai, kelulusan, ringkasan jawaban, dan durasi
+- Review jawaban peserta bergaya Google Form dengan penanda jawaban peserta, jawaban benar, dan penjelasan
 - Link dan QR Code peserta pada detail sesi, lengkap dengan salin link dan unduh QR
 - Halaman presentasi QR ukuran besar untuk ditampilkan dan dipindai peserta
 - Leaderboard sesi dengan podium, statistik, akurasi, durasi, dan peringkat lengkap
@@ -249,6 +250,7 @@ mkquizz/
 | `GET` | `/quiz/{session_token}/attempt/{id}` | Halaman pengerjaan soal peserta |
 | `POST` | `/quiz/{session_token}/attempt/{id}/submit` | Menyimpan jawaban dan menghitung hasil quiz |
 | `GET` | `/quiz/{session_token}/result/{id}` | Halaman hasil quiz peserta |
+| `GET` | `/quiz/{session_token}/result/{id}/review` | Review soal dan jawaban peserta |
 | `GET` | `/quiz/{session_token}/leaderboard` | Leaderboard publik hasil peserta per sesi |
 
 Seluruh halaman panel dilindungi oleh filter `adminAuth`. Route material dan pertanyaan juga memakai filter `adminRole`, sehingga hanya `ADMIN` dan `SUPERADMIN` yang dapat mengaksesnya. Seluruh request yang mengubah data dilindungi oleh CSRF.

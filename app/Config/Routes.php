@@ -12,6 +12,7 @@ $routes->post('quiz/(:segment)/start', 'Participant\\QuizAccessController::start
 $routes->get('quiz/(:segment)/attempt/(:num)', 'Participant\\QuizAccessController::attempt/$1/$2', ['as' => 'participant.quiz.attempt']);
 $routes->post('quiz/(:segment)/attempt/(:num)/submit', 'Participant\\QuizAccessController::submit/$1/$2', ['filter' => 'csrf', 'as' => 'participant.quiz.submit']);
 $routes->get('quiz/(:segment)/result/(:num)', 'Participant\\QuizAccessController::result/$1/$2', ['as' => 'participant.quiz.result']);
+$routes->get('quiz/(:segment)/result/(:num)/review', 'Participant\\QuizAccessController::review/$1/$2', ['as' => 'participant.quiz.review']);
 $routes->get('quiz/(:segment)/leaderboard', 'Participant\\QuizAccessController::leaderboard/$1', ['as' => 'participant.quiz.leaderboard']);
 
 $routes->group('admin', static function ($routes): void {
