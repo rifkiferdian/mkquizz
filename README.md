@@ -1,13 +1,15 @@
 # MKQuizz
 
-MKQuizz adalah aplikasi pengelolaan materi dan quiz berbasis web. Aplikasi dibangun menggunakan CodeIgniter 4, MySQL, Tailwind CSS, dan JavaScript serta dirancang untuk membantu administrator menyiapkan materi, pertanyaan, quiz, sesi, dan hasil peserta.
+MKQuizz adalah aplikasi pengelolaan materi dan quiz berbasis web. Aplikasi dibangun menggunakan CodeIgniter 4, MySQL, Tailwind CSS, dan JavaScript serta dirancang untuk membantu administrator dan presenter mengelola quiz, sesi, dan hasil peserta.
 
 ## Status Pengembangan
 
 Modul yang sudah tersedia:
 
-- Login dan logout administrator
-- Proteksi halaman berdasarkan session dan role admin
+- Login dan logout administrator serta presenter melalui satu portal
+- Proteksi halaman berdasarkan session dan role pengguna
+- Akses presenter untuk dashboard, quiz, sesi, dan peserta
+- Pembatasan materi dan bank pertanyaan khusus administrator
 - Dashboard statistik quiz
 - Daftar quiz terbaru dan sesi yang sedang berlangsung
 - Pengelolaan material: daftar, pencarian, filter, tambah, edit, status, dan hapus
@@ -18,6 +20,7 @@ Modul yang sudah tersedia:
 - Daftar quiz dengan pencarian, filter, statistik konten, sesi, dan pengerjaan
 - Detail quiz dengan konfigurasi, pertanyaan, jawaban benar, sesi, dan performa peserta
 - Daftar dan detail sesi quiz dengan PIN, token, peserta, serta performa sesi
+- Daftar dan detail peserta dengan filter aktivitas, riwayat pengerjaan, nilai, dan informasi perangkat
 - Tampilan responsif bertema putih dan oranye
 
 Skema database juga sudah menyediakan tabel untuk pertanyaan, pilihan jawaban, quiz, sesi, peserta, pengerjaan quiz, jawaban peserta, serta audit log. Antarmuka untuk modul-modul tersebut akan dikembangkan secara bertahap.
@@ -150,6 +153,13 @@ Email    : admin@mkquizz.edu
 Password : admin123
 ```
 
+Akun presenter development:
+
+```text
+Email    : presenter@mkquizz.edu
+Password : presenter123
+```
+
 > Password tersebut hanya ditujukan untuk development lokal. Ganti dengan password yang kuat sebelum aplikasi digunakan di production.
 
 ## Menjalankan Development Server
@@ -177,7 +187,7 @@ mkquizz/
 │   ├── Controllers/Admin/  # Controller autentikasi, dashboard, dan material
 │   ├── Database/Seeds/     # Seeder akun administrator
 │   ├── Filters/            # Filter autentikasi administrator
-│   ├── Models/             # Model user, dashboard, material, pertanyaan, quiz, dan sesi
+│   ├── Models/             # Model user, dashboard, material, pertanyaan, quiz, sesi, dan peserta
 │   ├── Services/           # Transaksi penyimpanan pertanyaan dan opsi jawaban
 │   └── Views/admin/        # Layout dan halaman admin
 ├── public/
@@ -215,8 +225,10 @@ mkquizz/
 | `GET` | `/admin/quizzes/{id}` | Detail, pertanyaan, sesi, dan performa quiz |
 | `GET` | `/admin/sessions` | Daftar, pencarian, dan filter sesi quiz |
 | `GET` | `/admin/sessions/{id}` | Detail akses, peserta, dan performa sesi |
+| `GET` | `/admin/participants` | Daftar, pencarian, dan filter peserta |
+| `GET` | `/admin/participants/{id}` | Detail peserta dan riwayat pengerjaan quiz |
 
-Route dashboard dan material dilindungi oleh filter `adminAuth`. Seluruh request yang mengubah data juga dilindungi oleh CSRF.
+Seluruh halaman panel dilindungi oleh filter `adminAuth`. Route material dan pertanyaan juga memakai filter `adminRole`, sehingga hanya `ADMIN` dan `SUPERADMIN` yang dapat mengaksesnya. Seluruh request yang mengubah data dilindungi oleh CSRF.
 
 ## Keamanan Autentikasi
 
@@ -226,7 +238,8 @@ Modul autentikasi menerapkan:
 - Verifikasi password menggunakan `password_verify`
 - Regenerasi session ID setelah login dan logout
 - Pembatasan percobaan login
-- Validasi role `ADMIN` dan `SUPERADMIN`
+- Validasi role `ADMIN`, `SUPERADMIN`, dan `PRESENTER`
+- Pembatasan akses berbasis role untuk halaman pengelolaan materi dan pertanyaan
 - Proteksi CSRF pada request `POST`
 - Escaping data ketika ditampilkan pada view
 

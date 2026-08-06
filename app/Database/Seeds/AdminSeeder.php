@@ -8,29 +8,41 @@ final class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        $email = 'admin@mkquizz.edu';
-        $data = [
-            'name'       => 'Administrator',
-            'email'      => $email,
-            'password'   => password_hash('admin123', PASSWORD_DEFAULT),
-            'role'       => 'SUPERADMIN',
-            'is_active'  => 1,
-            'updated_at' => date('Y-m-d H:i:s'),
+        $builder = $this->db->table('users');
+        $accounts = [
+            [
+                'name'     => 'Administrator',
+                'email'    => 'admin@mkquizz.edu',
+                'password' => 'admin123',
+                'role'     => 'SUPERADMIN',
+            ],
+            [
+                'name'     => 'Presenter Quiz',
+                'email'    => 'presenter@mkquizz.edu',
+                'password' => 'presenter123',
+                'role'     => 'PRESENTER',
+            ],
         ];
 
-        $builder = $this->db->table('users');
-        $existing = $builder->where('email', $email)->get()->getRowArray();
+        foreach ($accounts as $account) {
+            $existing = $builder->where('email', $account['email'])->get()->getRowArray();
+            $now = date('Y-m-d H:i:s');
+            $data = [
+                'name'       => $account['name'],
+                'email'      => $account['email'],
+                'password'   => password_hash($account['password'], PASSWORD_DEFAULT),
+                'role'       => $account['role'],
+                'is_active'  => 1,
+                'updated_at' => $now,
+            ];
 
-        if ($existing !== null) {
-            $builder->where('id', $existing['id'])->update([
-                'password'   => $data['password'],
-                'updated_at' => $data['updated_at'],
-            ]);
+            if ($existing !== null) {
+                $builder->where('id', $existing['id'])->update($data);
+                continue;
+            }
 
-            return;
+            $data['created_at'] = $now;
+            $builder->insert($data);
         }
-
-        $data['created_at'] = date('Y-m-d H:i:s');
-        $builder->insert($data);
     }
 }

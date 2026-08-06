@@ -9,6 +9,12 @@
         </div>
     <?php endif ?>
 
+    <?php if (session('error')): ?>
+        <div class="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+            <?= esc(session('error')) ?>
+        </div>
+    <?php endif ?>
+
     <section aria-labelledby="summary-title">
         <div class="mb-5 flex items-end justify-between">
             <div>

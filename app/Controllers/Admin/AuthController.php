@@ -15,7 +15,7 @@ final class AuthController extends BaseController
         }
 
         return view('admin/auth/login', [
-            'title' => 'Login Admin',
+            'title' => 'Login Pengelola',
         ]);
     }
 
@@ -38,7 +38,7 @@ final class AuthController extends BaseController
                 ->with('error', 'Terlalu banyak percobaan. Silakan coba lagi dalam satu menit.');
         }
 
-        $user = model(UserModel::class)->findActiveAdminByEmail($email);
+        $user = model(UserModel::class)->findActivePanelUserByEmail($email);
         $password = (string) $this->request->getPost('password');
 
         if ($user === null || ! password_verify($password, $user['password'])) {

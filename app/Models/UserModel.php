@@ -22,11 +22,11 @@ final class UserModel extends Model
 
     protected $useTimestamps = true;
 
-    public function findActiveAdminByEmail(string $email): ?array
+    public function findActivePanelUserByEmail(string $email): ?array
     {
         $user = $this->where('email', strtolower($email))
             ->where('is_active', 1)
-            ->whereIn('role', ['ADMIN', 'SUPERADMIN'])
+            ->whereIn('role', ['ADMIN', 'SUPERADMIN', 'PRESENTER'])
             ->first();
 
         return $user ?: null;

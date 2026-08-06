@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Dashboard administrator MKQuizz">
+    <meta name="description" content="Dashboard pengelola MKQuizz">
     <title><?= esc($title ?? 'Admin') ?> | MKQuizz</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,14 +11,17 @@
     <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
 </head>
 <body>
-<?php $activeMenu = service('uri')->getSegment(2) ?: 'dashboard'; ?>
+<?php
+$activeMenu = service('uri')->getSegment(2) ?: 'dashboard';
+$isPresenter = session('admin_role') === 'PRESENTER';
+?>
 <div class="dashboard-shell">
     <aside class="sidebar fixed inset-y-0 left-0 z-20 flex flex-col text-slate-700">
         <div class="flex h-20 items-center gap-3 border-b border-slate-100 px-5">
             <div class="grid size-10 shrink-0 place-items-center rounded-xl bg-orange-500 text-sm font-black text-white shadow-lg shadow-orange-500/20">MQ</div>
             <div class="brand-copy">
                 <p class="text-lg font-extrabold tracking-tight text-slate-900">MK<span class="text-orange-500">Quizz</span></p>
-                <p class="text-[.65rem] uppercase tracking-[.2em] text-slate-400">Admin panel</p>
+                <p class="text-[.65rem] uppercase tracking-[.2em] text-slate-400"><?= $isPresenter ? 'Presenter panel' : 'Admin panel' ?></p>
             </div>
         </div>
 
@@ -27,6 +30,7 @@
                 <svg class="size-5 shrink-0" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                 <span class="sidebar-label">Dashboard</span>
             </a>
+            <?php if (! $isPresenter): ?>
             <a href="<?= site_url('admin/materials') ?>" class="nav-link <?= $activeMenu === 'materials' ? 'active' : '' ?> flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-semibold">
                 <svg class="size-5 shrink-0" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5m-3 3 3-3 3 3M5 5h10a2 2 0 0 1 2 2v12H7a2 2 0 0 1-2-2V5Z"/></svg>
                 <span class="sidebar-label">Materi</span>
@@ -35,6 +39,7 @@
                 <svg class="size-5 shrink-0" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 18h.01M9.2 9a3 3 0 1 1 4.7 2.5c-1.2.8-1.9 1.2-1.9 2.5M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z"/></svg>
                 <span class="sidebar-label">Pertanyaan</span>
             </a>
+            <?php endif ?>
             <a href="<?= site_url('admin/quizzes') ?>" class="nav-link <?= $activeMenu === 'quizzes' ? 'active' : '' ?> flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-semibold">
                 <svg class="size-5 shrink-0" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11h6M9 15h4M8 3h8l3 3v15H5V3h3Z"/></svg>
                 <span class="sidebar-label">Quiz</span>
@@ -43,12 +48,10 @@
                 <svg class="size-5 shrink-0" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 2v3m8-3v3M3 9h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z"/></svg>
                 <span class="sidebar-label">Sesi Quiz</span>
             </a>
-            <?php foreach ([['Peserta', 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87']] as [$label, $path]): ?>
-                <span class="nav-link flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium opacity-70" title="Modul berikutnya">
-                    <svg class="size-5 shrink-0" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="<?= esc($path) ?>"/></svg>
-                    <span class="sidebar-label"><?= esc($label) ?></span>
-                </span>
-            <?php endforeach ?>
+            <a href="<?= site_url('admin/participants') ?>" class="nav-link <?= $activeMenu === 'participants' ? 'active' : '' ?> flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-semibold">
+                <svg class="size-5 shrink-0" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87"/></svg>
+                <span class="sidebar-label">Peserta</span>
+            </a>
         </nav>
 
         <div class="border-t border-slate-100 p-4">

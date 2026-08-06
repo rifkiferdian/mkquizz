@@ -17,11 +17,11 @@ final class AdminAuthFilter implements FilterInterface
                 ->with('error', 'Silakan masuk untuk mengakses dashboard.');
         }
 
-        if (! in_array($session->get('admin_role'), ['ADMIN', 'SUPERADMIN'], true)) {
+        if (! in_array($session->get('admin_role'), ['ADMIN', 'SUPERADMIN', 'PRESENTER'], true)) {
             $session->destroy();
 
             return redirect()->to(site_url('admin/login'))
-                ->with('error', 'Akun Anda tidak memiliki akses admin.');
+                ->with('error', 'Akun Anda tidak memiliki akses panel.');
         }
 
         return null;

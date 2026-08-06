@@ -493,6 +493,57 @@ body {
 .session-timeline-item:last-child { padding-bottom: 0; }
 .session-timeline-dot { position: absolute; top: .2rem; left: -1.22rem; width: .55rem; height: .55rem; border: 2px solid #fff; border-radius: 9999px; box-shadow: 0 0 0 2px #e2e8f0; }
 
+.participant-filter-panel {
+    padding: 1.15rem 1.25rem;
+    border-bottom: 1px solid #ffedd5;
+    background: linear-gradient(115deg, #fff 0%, #fff 55%, #fff8ef 100%);
+}
+
+.participant-filter-grid {
+    display: grid;
+    grid-template-columns: minmax(15rem, 1fr) minmax(12rem, .65fr) minmax(12rem, .65fr) auto auto;
+    align-items: end;
+    gap: .75rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ffedd5;
+}
+
+.participant-avatar {
+    display: grid;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    place-items: center;
+    border: 1px solid #fed7aa;
+    border-radius: 9999px;
+    color: var(--orange-600);
+    background: linear-gradient(145deg, #fff7ed, #ffedd5);
+    font-size: .7rem;
+    font-weight: 800;
+}
+
+.participant-detail-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 1.5rem;
+    border: 1px solid #ffedd5;
+    border-radius: 1rem;
+    background: linear-gradient(115deg, #fff 0%, #fff 58%, #fff3e3 100%);
+    box-shadow: 0 7px 25px rgba(255, 130, 0, .06);
+}
+
+.participant-detail-hero::after {
+    position: absolute;
+    top: -6rem;
+    right: -3rem;
+    width: 15rem;
+    height: 15rem;
+    border-radius: 9999px;
+    background: rgba(255, 172, 73, .12);
+    content: "";
+}
+
 @media (max-width: 900px) {
     .material-filter-grid { grid-template-columns: minmax(0, 1fr) 12rem; }
     .material-filter-button, .material-reset-button { width: 100%; }
@@ -500,6 +551,7 @@ body {
     .question-filter-search { grid-column: 1 / -1; }
     .quiz-filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .session-filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .participant-filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 640px) {
@@ -512,6 +564,8 @@ body {
     .quiz-filter-grid { grid-template-columns: 1fr; }
     .session-filter-grid { grid-template-columns: 1fr; }
     .session-filter-panel { padding: 1rem; }
+    .participant-filter-grid { grid-template-columns: 1fr; }
+    .participant-filter-panel { padding: 1rem; }
 }
 
 @media (max-width: 900px) {

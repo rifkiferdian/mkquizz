@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Login administrator MKQuizz">
+    <meta name="description" content="Login pengelola MKQuizz">
     <title><?= esc($title) ?> | MKQuizz</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,9 +22,9 @@
         </div>
 
         <div class="mt-5 text-center">
-            <p class="text-xs font-bold uppercase tracking-[.22em] text-orange-500">Admin Portal</p>
+            <p class="text-xs font-bold uppercase tracking-[.22em] text-orange-500">Management Portal</p>
             <h1 id="login-title" class="mt-2 text-[1.65rem] font-extrabold tracking-tight text-slate-900">Welcome Back</h1>
-            <p class="mt-2 text-sm text-slate-500">Login untuk mengelola quiz dan materi</p>
+            <p class="mt-2 text-sm text-slate-500">Login sebagai admin atau presenter quiz</p>
         </div>
 
         <?php if (session('error')): ?>
@@ -84,7 +84,7 @@
         <div class="mt-7 border-t border-slate-100 pt-5 text-center text-[.7rem] text-slate-500">
             <span class="inline-flex items-center gap-1.5">
                 <svg class="size-3.5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 5 6v5c0 4.6 2.7 8 7 10 4.3-2 7-5.4 7-10V6l-7-3Z"/><path d="m9.5 12 1.5 1.5 3.5-4"/></svg>
-                Secure Admin Access
+                Secure Management Access
             </span>
         </div>
     </section>
