@@ -37,7 +37,7 @@ final class QuestionController extends BaseController
 
     public function create(): string
     {
-        return $this->formView(null, []);
+        return $this->formView(null, [], $this->materialContextId($this->request->getGet('material_id')));
     }
 
     public function store(): RedirectResponse
@@ -56,7 +56,10 @@ final class QuestionController extends BaseController
             return redirect()->back()->withInput()->with('error', $exception->getMessage());
         }
 
-        return redirect()->to(site_url('admin/questions'))->with('success', 'Pertanyaan dan pilihan jawaban berhasil ditambahkan.');
+        $returnMaterialId = $this->materialContextId($this->request->getPost('return_material_id'));
+
+        return redirect()->to($this->questionListUrl($returnMaterialId))
+            ->with('success', 'Pertanyaan dan pilihan jawaban berhasil ditambahkan.');
     }
 
     public function edit(int $id): string
@@ -112,15 +115,28 @@ final class QuestionController extends BaseController
         return redirect()->to(site_url('admin/questions'))->with('success', 'Pertanyaan dan pilihan jawabannya berhasil dihapus.');
     }
 
-    private function formView(?array $question, array $options): string
+    private function formView(?array $question, array $options, int $materialContextId = 0): string
     {
         return view('admin/questions/form', [
-            'title'     => $question === null ? 'Tambah Pertanyaan' : 'Edit Pertanyaan',
-            'subtitle'  => 'Susun soal, pilihan jawaban, dan kunci jawaban.',
-            'question'  => $question,
-            'options'   => $options,
-            'materials' => model(MaterialModel::class)->orderBy('title', 'ASC')->findAll(),
+            'title'             => $question === null ? 'Tambah Pertanyaan' : 'Edit Pertanyaan',
+            'subtitle'          => 'Susun soal, pilihan jawaban, dan kunci jawaban.',
+            'question'          => $question,
+            'options'           => $options,
+            'materials'         => model(MaterialModel::class)->orderBy('title', 'ASC')->findAll(),
+            'materialContextId' => $materialContextId,
         ]);
+    }
+
+    private function materialContextId(mixed $value): int
+    {
+        $materialId = max(0, (int) $value);
+
+        return $materialId > 0 && model(MaterialModel::class)->find($materialId) !== null ? $materialId : 0;
+    }
+
+    private function questionListUrl(int $materialId): string
+    {
+        return site_url('admin/questions') . ($materialId > 0 ? '?' . http_build_query(['material_id' => $materialId]) : '');
     }
 
     /** @return array<string, mixed> */

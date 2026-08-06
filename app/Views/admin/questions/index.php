@@ -17,6 +17,7 @@ $pageUrl = static function (int $targetPage) use ($filters): string {
 
 $difficultyLabels = ['EASY' => 'Mudah', 'MEDIUM' => 'Sedang', 'HARD' => 'Sulit'];
 $difficultyColors = ['EASY' => 'bg-green-50 text-green-600', 'MEDIUM' => 'bg-orange-50 text-orange-600', 'HARD' => 'bg-red-50 text-red-600'];
+$createQuestionUrl = site_url('admin/questions/create') . ($filters['material_id'] > 0 ? '?' . http_build_query(['material_id' => $filters['material_id']]) : '');
 ?>
 <div class="p-5 md:p-8">
 <div class="mx-auto max-w-7xl">
@@ -33,7 +34,7 @@ $difficultyColors = ['EASY' => 'bg-green-50 text-green-600', 'MEDIUM' => 'bg-ora
             <h2 class="mt-1 text-lg font-bold text-slate-800">Bank Pertanyaan</h2>
             <p class="mt-1 text-xs text-slate-400">Kelola soal, pilihan jawaban, dan kunci jawaban.</p>
         </div>
-        <a href="<?= site_url('admin/questions/create') ?>" class="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-xs font-bold text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600">
+        <a href="<?= $createQuestionUrl ?>" class="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-xs font-bold text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600">
             <svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
             Tambah Pertanyaan
         </a>

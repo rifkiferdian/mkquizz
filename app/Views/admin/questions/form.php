@@ -4,7 +4,10 @@
 <?php
 $errors = session('errors') ?? [];
 $isEdit = $question !== null;
-$action = $isEdit ? site_url('admin/questions/' . $question['id']) : site_url('admin/questions');
+$materialContextId = (int) ($materialContextId ?? 0);
+$questionListUrl = site_url('admin/questions') . ($materialContextId > 0 ? '?' . http_build_query(['material_id' => $materialContextId]) : '');
+$action = $isEdit ? site_url('admin/questions/' . $question['id']) : site_url('admin/questions') . ($materialContextId > 0 ? '?' . http_build_query(['material_id' => $materialContextId]) : '');
+$selectedMaterialId = (string) old('material_id', $question['material_id'] ?? ($materialContextId ?: ''));
 $questionType = (string) old('question_type', $question['question_type'] ?? 'MULTIPLE_CHOICE');
 $postedOptions = old('option_text');
 
@@ -30,7 +33,7 @@ $isActive = (string) old('is_active', $question['is_active'] ?? 1) === '1';
 ?>
 <div class="p-5 md:p-8">
 <div class="mx-auto max-w-7xl">
-    <a href="<?= site_url('admin/questions') ?>" class="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 transition hover:text-orange-600"><svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>Kembali ke Pertanyaan</a>
+    <a href="<?= $questionListUrl ?>" class="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 transition hover:text-orange-600"><svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15 18-6-6 6-6"/></svg>Kembali ke Pertanyaan</a>
 
     <?php if (session('error')): ?>
         <div class="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert"><?= esc(session('error')) ?></div>
@@ -38,13 +41,14 @@ $isActive = (string) old('is_active', $question['is_active'] ?? 1) === '1';
 
     <form action="<?= $action ?>" method="post" class="mt-5">
         <?= csrf_field() ?>
+        <input type="hidden" name="return_material_id" value="<?= $materialContextId ?>">
         <div class="grid items-start gap-6 xl:grid-cols-[minmax(0,1.25fr)_minmax(24rem,.75fr)]">
             <div class="space-y-6">
                 <section class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm" aria-labelledby="question-detail-title">
                     <div class="question-form-heading"><p class="text-xs font-bold uppercase tracking-[.18em] text-orange-500"><?= $isEdit ? 'Update Question' : 'New Question' ?></p><h2 id="question-detail-title" class="mt-1 text-lg font-bold text-slate-800">Detail Pertanyaan</h2><p class="mt-1 text-xs text-slate-400">Tentukan material, tipe, dan isi pertanyaan.</p></div>
                     <div class="p-5 md:p-6">
                         <div class="grid gap-5 md:grid-cols-2">
-                            <div><label for="material_id" class="question-label">Material <span class="text-red-500">*</span></label><select id="material_id" name="material_id" class="question-control <?= isset($errors['material_id']) ? 'has-error' : '' ?>" required><option value="">Pilih material</option><?php foreach ($materials as $material): ?><option value="<?= $material['id'] ?>" <?= (string) old('material_id', $question['material_id'] ?? '') === (string) $material['id'] ? 'selected' : '' ?>><?= esc(($material['code'] ? $material['code'] . ' — ' : '') . $material['title']) ?></option><?php endforeach ?></select><?php if (isset($errors['material_id'])): ?><p class="question-error"><?= esc($errors['material_id']) ?></p><?php endif ?></div>
+                            <div><label for="material_id" class="question-label">Material <span class="text-red-500">*</span></label><select id="material_id" name="material_id" class="question-control <?= isset($errors['material_id']) ? 'has-error' : '' ?>" required><option value="">Pilih material</option><?php foreach ($materials as $material): ?><option value="<?= $material['id'] ?>" <?= $selectedMaterialId === (string) $material['id'] ? 'selected' : '' ?>><?= esc(($material['code'] ? $material['code'] . ' — ' : '') . $material['title']) ?></option><?php endforeach ?></select><?php if (isset($errors['material_id'])): ?><p class="question-error"><?= esc($errors['material_id']) ?></p><?php endif ?></div>
                             <div><label for="question_type" class="question-label">Tipe Pertanyaan <span class="text-red-500">*</span></label><select id="question_type" name="question_type" class="question-control" required><option value="MULTIPLE_CHOICE" <?= $questionType === 'MULTIPLE_CHOICE' ? 'selected' : '' ?>>Pilihan Ganda</option><option value="TRUE_FALSE" <?= $questionType === 'TRUE_FALSE' ? 'selected' : '' ?>>Benar / Salah</option></select></div>
                         </div>
 
@@ -84,7 +88,7 @@ $isActive = (string) old('is_active', $question['is_active'] ?? 1) === '1';
 
                 <section class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
                     <label class="flex cursor-pointer items-center justify-between gap-4"><span><span class="block text-xs font-bold text-slate-700">Pertanyaan Aktif</span><span class="mt-1 block text-[.68rem] text-slate-400">Pertanyaan dapat digunakan dalam quiz.</span></span><span><input type="hidden" name="is_active" value="0"><input type="checkbox" name="is_active" value="1" class="material-switch" <?= $isActive ? 'checked' : '' ?>></span></label>
-                    <div class="mt-5 grid grid-cols-2 gap-3"><a href="<?= site_url('admin/questions') ?>" class="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-3 text-xs font-bold text-slate-500 transition hover:border-orange-200 hover:text-orange-600">Batal</a><button type="submit" class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-xs font-bold text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600"><svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><?= $isEdit ? 'Simpan' : 'Buat Soal' ?></button></div>
+                    <div class="mt-5 grid grid-cols-2 gap-3"><a href="<?= $questionListUrl ?>" class="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-3 text-xs font-bold text-slate-500 transition hover:border-orange-200 hover:text-orange-600">Batal</a><button type="submit" class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-xs font-bold text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600"><svg class="size-4" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><?= $isEdit ? 'Simpan' : 'Buat Soal' ?></button></div>
                 </section>
             </div>
         </div>
