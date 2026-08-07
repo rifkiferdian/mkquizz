@@ -12,10 +12,12 @@ final class DashboardController extends BaseController
         $dashboard = model(DashboardModel::class);
 
         return view('admin/dashboard/index', [
-            'title'          => 'Dashboard',
-            'summary'        => $dashboard->getSummary(),
-            'recentQuizzes'  => $dashboard->getRecentQuizzes(),
-            'activeSessions' => $dashboard->getActiveSessions(),
+            'title'              => 'Dashboard',
+            'summary'            => $dashboard->getSummary(),
+            'performance'        => $dashboard->getPerformanceSummary(),
+            'recentQuizzes'      => $dashboard->getRecentQuizzes(),
+            'activeSessions'     => $dashboard->getActiveSessions(),
+            'difficultQuestions' => $dashboard->getDifficultQuestions(),
         ]);
     }
 }

@@ -46,4 +46,43 @@ final class DashboardModel extends Model
             ->get()
             ->getResultArray();
     }
+
+    /** @return array{submitted: int, average: float, passed: int, pass_rate: float, open_sessions: int} */
+    public function getPerformanceSummary(): array
+    {
+        $row = $this->db->table('quiz_attempts')
+            ->select("COUNT(*) AS submitted, AVG(final_score) AS average, SUM(passed = 1) AS passed", false)
+            ->where('status', 'SUBMITTED')
+            ->get()
+            ->getRowArray();
+        $submitted = (int) ($row['submitted'] ?? 0);
+        $passed = (int) ($row['passed'] ?? 0);
+
+        return [
+            'submitted'     => $submitted,
+            'average'       => round((float) ($row['average'] ?? 0), 1),
+            'passed'        => $passed,
+            'pass_rate'     => $submitted > 0 ? round(($passed / $submitted) * 100, 1) : 0.0,
+            'open_sessions' => $this->db->table('quiz_sessions')->where('status', 'OPEN')->countAllResults(),
+        ];
+    }
+
+    /** @return list<array<string, mixed>> */
+    public function getDifficultQuestions(int $limit = 5): array
+    {
+        return $this->db->table('participant_answers')
+            ->select('questions.id, questions.question_text, materials.title AS material_title')
+            ->select('COUNT(participant_answers.id) AS response_count', false)
+            ->select('ROUND(SUM(participant_answers.is_correct = 1) * 100 / COUNT(participant_answers.id), 0) AS accuracy', false)
+            ->join('quiz_attempts', 'quiz_attempts.id = participant_answers.attempt_id')
+            ->join('questions', 'questions.id = participant_answers.question_id')
+            ->join('materials', 'materials.id = questions.material_id')
+            ->where('quiz_attempts.status', 'SUBMITTED')
+            ->groupBy('questions.id, questions.question_text, materials.title')
+            ->orderBy('accuracy', 'ASC')
+            ->orderBy('response_count', 'DESC')
+            ->limit($limit)
+            ->get()
+            ->getResultArray();
+    }
 }
