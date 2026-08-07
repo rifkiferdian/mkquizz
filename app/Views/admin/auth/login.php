@@ -86,6 +86,10 @@
                 <svg class="size-3.5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 5 6v5c0 4.6 2.7 8 7 10 4.3-2 7-5.4 7-10V6l-7-3Z"/><path d="m9.5 12 1.5 1.5 3.5-4"/></svg>
                 Secure Management Access
             </span>
+            <p class="mx-auto mt-3 max-w-xs border-t border-slate-100 pt-3 leading-relaxed text-slate-400">
+                Aplikasi ini dibuat oleh <span class="font-semibold text-slate-600">Divisi Software Engineer Manna Kampus</span><br>
+                by <span class="font-bold text-orange-600">Ahmad Rifki</span>
+            </p>
         </div>
     </section>
 </main>

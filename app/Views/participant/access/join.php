@@ -58,6 +58,11 @@ $accessMessage = match (true) {
         </form>
 
         <div class="participant-info"><svg class="mt-0.5 size-4 shrink-0 text-orange-500" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg><p>Pastikan nama yang dimasukkan benar karena akan digunakan pada hasil quiz.</p></div>
+
+        <footer class="mt-5 border-t border-slate-100 pt-4 text-center text-[.62rem] leading-relaxed text-slate-400">
+            Aplikasi ini dibuat oleh <span class="font-semibold text-slate-600">Divisi Software Engineer Manna Kampus</span><br>
+            by <span class="font-bold text-orange-600">Ahmad Rifki</span>
+        </footer>
     </section>
 </main>
 <script src="<?= base_url('assets/js/participant-access.js') ?>" defer></script>
