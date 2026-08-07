@@ -126,25 +126,38 @@ final class QuizSessionController extends BaseController
         return view('admin/sessions/form', [
             'title'          => 'Tambah Sesi Quiz',
             'subtitle'       => 'Atur jadwal, kapasitas, dan akses sesi quiz baru.',
+            'session'        => null,
+            'isQuizLocked'   => false,
             'quizzes'        => $this->availableQuizzes(),
             'selectedQuizId' => max(0, (int) $this->request->getGet('quiz_id')),
             'defaultStart'   => (new DateTimeImmutable('now', $timezone))->format('Y-m-d\\TH:i'),
         ]);
     }
 
+    public function edit(int $id): string
+    {
+        $quizSession = model(QuizSessionModel::class)->findAdminDetail($id);
+
+        if ($quizSession === null) {
+            throw PageNotFoundException::forPageNotFound('Sesi quiz tidak ditemukan.');
+        }
+
+        $timezone = new DateTimeZone('Asia/Jakarta');
+
+        return view('admin/sessions/form', [
+            'title'          => 'Edit Sesi Quiz',
+            'subtitle'       => 'Perbarui jadwal, kapasitas, dan pengaturan sesi quiz.',
+            'session'        => $quizSession,
+            'isQuizLocked'   => (int) $quizSession['participant_count'] > 0,
+            'quizzes'        => $this->availableQuizzes((int) $quizSession['quiz_id']),
+            'selectedQuizId' => (int) $quizSession['quiz_id'],
+            'defaultStart'   => (new DateTimeImmutable($quizSession['pin_valid_from'], $timezone))->format('Y-m-d\\TH:i'),
+        ]);
+    }
+
     public function store(): RedirectResponse
     {
-        $rules = [
-            'quiz_id'             => 'required|is_natural_no_zero|is_not_unique[quizzes.id]',
-            'session_name'        => 'required|max_length[200]',
-            'pin_valid_from'      => 'required',
-            'pin_valid_minutes'   => 'required|is_natural_no_zero|less_than_equal_to[10080]',
-            'max_participants'    => 'permit_empty|is_natural_no_zero|less_than_equal_to[100000]',
-            'allow_duplicate_name'=> 'permit_empty|in_list[0,1]',
-            'status'              => 'required|in_list[DRAFT,WAITING,OPEN]',
-        ];
-
-        if (! $this->validate($rules)) {
+        if (! $this->validate($this->sessionRules())) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
@@ -201,6 +214,94 @@ final class QuizSessionController extends BaseController
         return redirect()->to(site_url('admin/sessions/' . $sessionId))->with('success', 'Sesi quiz berhasil dibuat. PIN dan token akses sudah tersedia.');
     }
 
+    public function update(int $id): RedirectResponse
+    {
+        $sessionModel = model(QuizSessionModel::class);
+        $quizSession = $sessionModel->findAdminDetail($id);
+
+        if ($quizSession === null) {
+            throw PageNotFoundException::forPageNotFound('Sesi quiz tidak ditemukan.');
+        }
+
+        if (! $this->validate($this->sessionRules(true))) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $quizId = (int) $this->request->getPost('quiz_id');
+        $currentQuizId = (int) $quizSession['quiz_id'];
+
+        if ((int) $quizSession['participant_count'] > 0 && $quizId !== $currentQuizId) {
+            return redirect()->back()->withInput()->with('errors', ['quiz_id' => 'Quiz tidak dapat diganti karena sesi sudah memiliki peserta.']);
+        }
+
+        $quizModel = model(QuizModel::class);
+        $quiz = $quizModel->find($quizId);
+
+        if ($quiz === null || ($quizId !== $currentQuizId && $quiz['status'] !== 'ACTIVE')) {
+            return redirect()->back()->withInput()->with('errors', ['quiz_id' => 'Pilih quiz aktif yang valid.']);
+        }
+
+        if (db_connect()->table('quiz_questions')->where('quiz_id', $quizId)->countAllResults() === 0) {
+            return redirect()->back()->withInput()->with('errors', ['quiz_id' => 'Quiz harus memiliki minimal satu pertanyaan.']);
+        }
+
+        $timezone = new DateTimeZone('Asia/Jakarta');
+        $scheduledAt = DateTimeImmutable::createFromFormat('!Y-m-d\\TH:i', (string) $this->request->getPost('pin_valid_from'), $timezone);
+        $dateErrors = DateTimeImmutable::getLastErrors();
+
+        if ($scheduledAt === false || (is_array($dateErrors) && ($dateErrors['warning_count'] > 0 || $dateErrors['error_count'] > 0))) {
+            return redirect()->back()->withInput()->with('errors', ['pin_valid_from' => 'Jadwal mulai tidak valid.']);
+        }
+
+        $now = new DateTimeImmutable('now', $timezone);
+        $status = (string) $this->request->getPost('status');
+
+        if ($status === 'OPEN' && $scheduledAt > $now) {
+            return redirect()->back()->withInput()->with('errors', ['status' => 'Sesi dengan jadwal mendatang belum dapat langsung dibuka.']);
+        }
+
+        $validMinutes = (int) $this->request->getPost('pin_valid_minutes');
+        $maxParticipants = trim((string) $this->request->getPost('max_participants'));
+
+        if ($maxParticipants !== '' && (int) $maxParticipants < (int) $quizSession['participant_count']) {
+            return redirect()->back()->withInput()->with('errors', [
+                'max_participants' => 'Kapasitas tidak boleh kurang dari jumlah peserta yang sudah bergabung.',
+            ]);
+        }
+
+        $data = [
+            'quiz_id'              => $quizId,
+            'session_name'         => trim((string) $this->request->getPost('session_name')),
+            'pin_valid_minutes'    => $validMinutes,
+            'pin_valid_from'       => $scheduledAt->format('Y-m-d H:i:s'),
+            'pin_valid_until'      => $scheduledAt->modify('+' . $validMinutes . ' minutes')->format('Y-m-d H:i:s'),
+            'max_participants'     => $maxParticipants === '' ? null : (int) $maxParticipants,
+            'allow_duplicate_name' => $this->request->getPost('allow_duplicate_name') === '1' ? 1 : 0,
+            'status'               => $status,
+            'opened_at'            => $status === 'OPEN'
+                ? ($quizSession['opened_at'] ?: $now->format('Y-m-d H:i:s'))
+                : $quizSession['opened_at'],
+            'closed_at'            => $status === 'CLOSED'
+                ? ($quizSession['closed_at'] ?: $now->format('Y-m-d H:i:s'))
+                : null,
+        ];
+
+        try {
+            if (! $sessionModel->update($id, $data)) {
+                throw new \RuntimeException('Pembaruan sesi ditolak oleh model.');
+            }
+        } catch (Throwable $exception) {
+            log_message('error', 'Gagal memperbarui sesi quiz {id}: {message}', [
+                'id'      => $id,
+                'message' => $exception->getMessage(),
+            ]);
+
+            return redirect()->back()->withInput()->with('error', 'Perubahan sesi quiz belum dapat disimpan. Silakan coba kembali.');
+        }
+
+        return redirect()->to(site_url('admin/sessions/' . $id))->with('success', 'Sesi quiz berhasil diperbarui.');
+    }
+
     public function extendPin(int $id): RedirectResponse
     {
         if (! $this->validate([
@@ -241,14 +342,39 @@ final class QuizSessionController extends BaseController
     }
 
     /** @return list<array<string, mixed>> */
-    private function availableQuizzes(): array
+    private function availableQuizzes(int $includeQuizId = 0): array
     {
-        return model(QuizModel::class)
+        $quizModel = model(QuizModel::class);
+        $quizModel
             ->select('quizzes.id, quizzes.title, quizzes.duration_minutes, quizzes.passing_score, materials.title AS material_title, materials.code AS material_code')
             ->select('(SELECT COUNT(*) FROM quiz_questions WHERE quiz_questions.quiz_id = quizzes.id) AS question_count', false)
             ->join('materials', 'materials.id = quizzes.material_id')
-            ->where('quizzes.status', 'ACTIVE')
+            ->groupStart()
+                ->where('quizzes.status', 'ACTIVE');
+
+        if ($includeQuizId > 0) {
+            $quizModel->orWhere('quizzes.id', $includeQuizId);
+        }
+
+        return $quizModel
+            ->groupEnd()
             ->orderBy('quizzes.title', 'ASC')
             ->findAll();
+    }
+
+    /** @return array<string, string> */
+    private function sessionRules(bool $includeClosed = false): array
+    {
+        $statuses = $includeClosed ? 'DRAFT,WAITING,OPEN,CLOSED' : 'DRAFT,WAITING,OPEN';
+
+        return [
+            'quiz_id'              => 'required|is_natural_no_zero|is_not_unique[quizzes.id]',
+            'session_name'         => 'required|max_length[200]',
+            'pin_valid_from'       => 'required',
+            'pin_valid_minutes'    => 'required|is_natural_no_zero|less_than_equal_to[10080]',
+            'max_participants'     => 'permit_empty|is_natural_no_zero|less_than_equal_to[100000]',
+            'allow_duplicate_name' => 'permit_empty|in_list[0,1]',
+            'status'               => 'required|in_list[' . $statuses . ']',
+        ];
     }
 }

@@ -40,12 +40,16 @@ $routes->group('admin', static function ($routes): void {
     $routes->get('quizzes', 'Admin\\QuizController::index', ['filter' => 'adminAuth', 'as' => 'admin.quizzes']);
     $routes->get('quizzes/create', 'Admin\\QuizController::create', ['filter' => ['adminAuth', 'adminRole']]);
     $routes->post('quizzes', 'Admin\\QuizController::store', ['filter' => ['adminAuth', 'adminRole', 'csrf']]);
+    $routes->get('quizzes/(:num)/edit', 'Admin\\QuizController::edit/$1', ['filter' => ['adminAuth', 'adminRole']]);
+    $routes->post('quizzes/(:num)', 'Admin\\QuizController::update/$1', ['filter' => ['adminAuth', 'adminRole', 'csrf']]);
     $routes->get('quizzes/(:num)/report', 'Admin\\QuizController::report/$1', ['filter' => 'adminAuth', 'as' => 'admin.quiz.report']);
     $routes->get('quizzes/(:num)', 'Admin\\QuizController::show/$1', ['filter' => 'adminAuth', 'as' => 'admin.quiz.detail']);
 
     $routes->get('sessions', 'Admin\\QuizSessionController::index', ['filter' => 'adminAuth', 'as' => 'admin.sessions']);
     $routes->get('sessions/create', 'Admin\\QuizSessionController::create', ['filter' => ['adminAuth', 'adminRole']]);
     $routes->post('sessions', 'Admin\\QuizSessionController::store', ['filter' => ['adminAuth', 'adminRole', 'csrf']]);
+    $routes->get('sessions/(:num)/edit', 'Admin\\QuizSessionController::edit/$1', ['filter' => ['adminAuth', 'adminRole']]);
+    $routes->post('sessions/(:num)', 'Admin\\QuizSessionController::update/$1', ['filter' => ['adminAuth', 'adminRole', 'csrf']]);
     $routes->post('sessions/(:num)/extend-pin', 'Admin\\QuizSessionController::extendPin/$1', ['filter' => ['adminAuth', 'csrf']]);
     $routes->get('sessions/(:num)/share', 'Admin\\QuizSessionController::share/$1', ['filter' => 'adminAuth', 'as' => 'admin.session.share']);
     $routes->get('sessions/(:num)/leaderboard', 'Admin\\QuizSessionController::leaderboard/$1', ['filter' => 'adminAuth', 'as' => 'admin.session.leaderboard']);
